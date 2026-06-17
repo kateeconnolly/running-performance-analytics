@@ -66,7 +66,7 @@ On the test set (most recent ~20% of runs), the model achieves a **negative R²*
 
 The most likely explanation is **distribution shift**: the pace distribution in the test period differs meaningfully from the training period. The `run_index` feature (sequential run count) captures a trend in the training data — for example, pace gradually slowing or speeding up over the 2021–2025 training window — and that trend does not extrapolate into the 2025–2026 test window.
 
-This is a genuine and informative finding. It illustrates a key challenge in modelling physiological time series with linear methods: running pace is non-stationary (training cycles, injury, life changes), and a single linear trend fitted over years of data will generalise poorly to any period where behaviour changes.
+This is a genuine and informative finding. It illustrates a key challenge in modeling physiological time series with linear methods: running pace is non-stationary (training cycles, injury, life changes), and a single linear trend fitted over years of data will generalize poorly to any period where behavior changes.
 
 ### Caveats
 

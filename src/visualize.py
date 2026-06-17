@@ -10,7 +10,7 @@ Figures generated
   rolling_mileage.png        4-week and 8-week rolling training load
   long_run_progression.png   Longest run per week over time
   pace_distribution.png      Pace histogram / KDE with effort-zone shading
-  pace_over_time.png         All runs coloured by effort level + trend
+  pace_over_time.png         All runs colored by effort level + trend
   pace_prediction.png        Actual vs. predicted pace (only if model ran)
 """
 from pathlib import Path
@@ -66,8 +66,9 @@ def _date_axis(ax: plt.Axes, interval: int = 3) -> None:
 
 def _pace_fmt(val: float, _) -> str:
     """Convert decimal minutes to MM:SS string (e.g. 9.5 → '9:30')."""
-    mins = int(val)
-    secs = int(round((val - mins) * 60))
+    total_secs = int(round(val * 60))
+    mins = total_secs // 60
+    secs = total_secs % 60
     return f"{mins}:{secs:02d}"
 
 
@@ -176,7 +177,7 @@ def plot_pace_distribution(runs: pd.DataFrame) -> None:
 
 # ══════════════════════════════════════════════════════════════════════════════
 def plot_pace_over_time(runs: pd.DataFrame) -> None:
-    """Scatter of all runs coloured by effort level, with a rolling average."""
+    """Scatter of all runs colored by effort level, with a rolling average."""
     fig, ax = plt.subplots(figsize=(14, 5))
 
     for effort in EFFORT_ORDER:
@@ -202,7 +203,7 @@ def plot_pace_over_time(runs: pd.DataFrame) -> None:
     ax.invert_yaxis()
     ax.set_ylim(p_hi + 0.3, p_lo - 0.3)
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(_pace_fmt))
-    ax.set_title("Pace Over Time  (dot size ∝ distance · colour = effort level)")
+    ax.set_title("Pace Over Time  (dot size ∝ distance · color = effort level)")
     ax.set_ylabel("Pace (min/mile)   ← faster")
     _date_axis(ax)
     ax.legend(markerscale=1.2)
@@ -212,7 +213,7 @@ def plot_pace_over_time(runs: pd.DataFrame) -> None:
 
 # ══════════════════════════════════════════════════════════════════════════════
 def plot_pace_vs_temp(runs: pd.DataFrame) -> None:
-    """Scatter of pace vs temperature, coloured by effort, with a trend line."""
+    """Scatter of pace vs temperature, colored by effort, with a trend line."""
     geo = runs[runs["temperature_f"].notna()].copy()
 
     # Clip y-axis to the 1st–99th percentile so outliers don't squash the view
@@ -260,9 +261,12 @@ def plot_pace_prediction(preds: pd.DataFrame) -> None:
             label=f"{split.capitalize()} set  (n={len(grp)})", zorder=3,
         )
 
+    p_lo = preds["pace_min_per_mile"].quantile(0.01)
+    p_hi = preds["pace_min_per_mile"].quantile(0.99)
+    lo = p_lo - 0.3
+    hi = p_hi + 0.3
+
     # y = x diagonal — perfect model would put all points on this line
-    lo = min(preds["pace_min_per_mile"].min(), preds["predicted_pace"].min()) - 0.2
-    hi = max(preds["pace_min_per_mile"].max(), preds["predicted_pace"].max()) + 0.2
     ax.plot([lo, hi], [lo, hi], color=DARK, linewidth=1.5,
             linestyle="--", label="Perfect prediction  (y = x)", zorder=2)
 

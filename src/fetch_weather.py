@@ -3,7 +3,7 @@ fetch_weather.py  —  Step 2 of 5
 ----------------------------------
 1. Reads the Filename column from the raw Strava CSV to find GPS files.
 2. Parses start lat/lon from each .gpx or .fit.gz activity file.
-3. Groups runs into 0.1° location buckets (~7 miles) to minimise API calls —
+3. Groups runs into 0.1° location buckets (~7 miles) to minimize API calls —
    most Chicago runs share one bucket; travel runs get their own.
 4. Fetches hourly temperature (°F) and relative humidity (%)
    from the Open-Meteo archive API — completely free, no API key required.

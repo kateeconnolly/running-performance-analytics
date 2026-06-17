@@ -311,6 +311,64 @@
       font-size: 0.79rem; color: #1565C0;
     }
 
+    /* ── Stick-figure runner ─────────────────────────────────────────── */
+    .runner-stage {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 104px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+    /* solid white + overall opacity = no additive overlap artifacts */
+    .stick-runner {
+      position: absolute;
+      bottom: 10px;
+      left: -60px;
+      opacity: 0.2;
+      animation: run-cross 9s linear infinite;
+    }
+    @keyframes run-cross {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc(100vw + 120px)); }
+    }
+    .runner-bob { animation: run-bob 0.34s ease-in-out infinite; }
+    @keyframes run-bob {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-4px); }
+    }
+    /* every animated group pivots around its own (0,0) = the joint */
+    .thigh-f, .thigh-b, .shin-f, .shin-b, .arm-f, .arm-b, .ponytail {
+      transform-origin: 0px 0px;
+    }
+    @keyframes thigh-swing {
+      from { transform: rotate(44deg); }   /* backward */
+      to   { transform: rotate(-44deg); }  /* forward / knee drive */
+    }
+    /* shin folds tight when thigh is back; extends to strike when thigh drives forward */
+    @keyframes shin-fold {
+      from { transform: rotate(-68deg); }  /* folded — heel toward hip */
+      to   { transform: rotate(-6deg); }   /* near-straight — foot in front */
+    }
+    /* arm sweeps forward from behind; bent-elbow polyline sells the pump */
+    @keyframes arm-pump {
+      from { transform: rotate(38deg); }   /* arm back */
+      to   { transform: rotate(-38deg); }  /* arm drives forward */
+    }
+    @keyframes tail-swing {
+      from { transform: rotate(-24deg); }
+      to   { transform: rotate(12deg); }
+    }
+    /* front leg & back arm start forward; back leg & front arm start back */
+    .thigh-f  { animation: thigh-swing 0.34s ease-in-out infinite alternate-reverse; }
+    .thigh-b  { animation: thigh-swing 0.34s ease-in-out infinite alternate; }
+    .shin-f   { animation: shin-fold   0.34s ease-in-out infinite alternate-reverse; }
+    .shin-b   { animation: shin-fold   0.34s ease-in-out infinite alternate; }
+    .arm-f    { animation: arm-pump    0.34s ease-in-out infinite alternate-reverse; }
+    .arm-b    { animation: arm-pump    0.34s ease-in-out infinite alternate; }
+    .ponytail { animation: tail-swing  0.34s ease-in-out infinite alternate; }
+    @media (prefers-reduced-motion: reduce) { .stick-runner { animation: none; } }
+
     /* ── Footer ───────────────────────────────────────────────────────── */
     footer {
       background: var(--ink); color: #555;
@@ -379,6 +437,61 @@
       <a href="https://github.com/kateeconnolly/running-performance-analytics"
          class="btn btn-ghost" target="_blank" rel="noopener">Source code</a>
     </div>
+  </div>
+
+  <!-- stick figure running across the bottom of the hero -->
+  <div class="runner-stage" aria-hidden="true">
+    <svg class="stick-runner" viewBox="-14 -4 44 80" width="48" height="87"
+         fill="none" stroke="white" stroke-width="2.8"
+         stroke-linecap="round" stroke-linejoin="round">
+      <g class="runner-bob">
+
+        <!-- back arm (drawn first = sits behind body) -->
+        <g transform="translate(9,18)">
+          <g class="arm-b"><polyline points="0,0 2,8 -5,13"/></g>
+        </g>
+
+        <!-- back leg: thigh rotates at hip; shin is child of thigh, rotates at knee -->
+        <g transform="translate(9,30)">
+          <g class="thigh-b">
+            <line x1="0" y1="0" x2="0" y2="14"/>
+            <g transform="translate(0,14)">
+              <g class="shin-b"><line x1="0" y1="0" x2="0" y2="13"/></g>
+            </g>
+          </g>
+        </g>
+
+        <!-- torso with slight forward lean -->
+        <line x1="10" y1="11" x2="8.5" y2="30"/>
+
+        <!-- head -->
+        <circle cx="10" cy="5.5" r="5.2"/>
+        <!-- hair bun -->
+        <circle cx="5.8" cy="2.8" r="2.3" fill="white" stroke="none"/>
+        <!-- ponytail anchored at bun -->
+        <g transform="translate(5.8,2.8)">
+          <g class="ponytail">
+            <path d="M 0,0 C -3,4 -7,8 -5,17" stroke-width="2.2"/>
+          </g>
+        </g>
+
+        <!-- front leg (drawn over torso) -->
+        <g transform="translate(9,30)">
+          <g class="thigh-f">
+            <line x1="0" y1="0" x2="0" y2="14"/>
+            <g transform="translate(0,14)">
+              <g class="shin-f"><line x1="0" y1="0" x2="0" y2="13"/></g>
+            </g>
+          </g>
+        </g>
+
+        <!-- front arm (drawn last = in front of everything) -->
+        <g transform="translate(9,18)">
+          <g class="arm-f"><polyline points="0,0 -2,8 5,13"/></g>
+        </g>
+
+      </g>
+    </svg>
   </div>
 </header>
 
@@ -465,7 +578,7 @@
       <p>Every run, plotted. Bigger dots are longer runs. The trend line is the most interesting thing here — my pace has been getting faster.</p>
     </div>
     <div class="card">
-      <img src="figures/pace_over_time.png" alt="All runs coloured by effort over time" loading="lazy" />
+      <img src="figures/pace_over_time.png" alt="All runs colored by effort over time" loading="lazy" />
       <div class="cap">
         <strong>All 1,225 runs</strong>
         <span>Colour = effort level · dot size ∝ distance · line = 30-day rolling average · y-axis inverted (lower = faster)</span>
@@ -483,7 +596,7 @@
       <img src="figures/pace_vs_temperature.png" alt="Pace vs temperature scatter" loading="lazy" />
       <div class="cap">
         <strong>Pace vs. Temperature — 813 outdoor runs</strong>
-        <span>Weather fetched from Open-Meteo API · colour = effort level · dashed = trend</span>
+        <span>Weather fetched from Open-Meteo API · color = effort level · dashed = trend</span>
       </div>
     </div>
   </section>

@@ -12,9 +12,9 @@ Design choices
 
   Ridge over OLS
       The rolling mileage features (7d, 28d, 56d) are highly correlated.
-      Ridge's L2 penalty stabilises coefficient estimates under multicollinearity.
+      Ridge's L2 penalty stabilizes coefficient estimates under multicollinearity.
 
-  Features are standardised (zero mean, unit variance) before fitting
+  Features are standardized (zero mean, unit variance) before fitting
       so that coefficients are directly comparable across features.
 
   No hyperparameter tuning
