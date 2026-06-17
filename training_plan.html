@@ -15,7 +15,7 @@
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
-    h1,h2,h3,h4,nav .wordmark { font-family: 'Space Grotesk', sans-serif; }
+    h1,h2,h3,nav .wordmark { font-family: 'Space Grotesk', sans-serif; }
 
     nav {
       position: sticky; top: 0; z-index: 100;
@@ -26,26 +26,23 @@
     }
     .wordmark { font-weight:700; font-size:0.92rem; color:var(--ink); text-decoration:none; }
     .wordmark span { color:var(--orange); }
-    .back-link { font-size:0.82rem; font-weight:500; color:var(--muted); text-decoration:none; transition: color .15s; }
+    .back-link { font-size:0.82rem; font-weight:500; color:var(--muted); text-decoration:none; }
     .back-link:hover { color:var(--ink); }
 
     .hero {
       background: var(--ink); color: #fff;
       padding: 5rem 2rem 4rem; text-align: center;
-      position: relative; overflow: hidden;
     }
     .hero h1 { font-size: clamp(2rem, 6vw, 3.8rem); font-weight:700; letter-spacing:-0.03em; line-height:1.1; margin-bottom:0.6rem; }
     .hero h1 em { font-style:normal; color:var(--orange); }
     .hero-sub { font-size:1rem; color:#A0A0A0; margin-bottom:2.5rem; }
-
     .hero-stats {
       display: inline-flex; flex-wrap: wrap; justify-content: center;
-      gap: 0; border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden;
     }
     .hstat { padding: 0.9rem 1.4rem; border-right: 1px solid rgba(255,255,255,0.1); text-align:center; }
     .hstat:last-child { border-right: none; }
-    .hstat-num { display:block; font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; color:#fff; letter-spacing:-0.02em; line-height:1.1; }
+    .hstat-num { display:block; font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; color:#fff; letter-spacing:-0.02em; }
     .hstat-label { display:block; font-size:0.7rem; color:#707070; text-transform:uppercase; letter-spacing:0.07em; margin-top:0.2rem; }
 
     main { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem; }
@@ -54,24 +51,14 @@
     .sh h2 { font-size:1.3rem; font-weight:700; letter-spacing:-0.02em; margin-bottom:0.25rem; }
     .sh p { font-size:0.9rem; color:var(--muted); }
 
-    .pace-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-    .pace-card {
-      border-radius: 14px; padding: 1.4rem 1.2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
+    .pace-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .pace-card { border-radius:14px; padding:1.4rem 1.2rem; box-shadow:0 2px 8px rgba(0,0,0,.06); }
     .pace-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4rem; }
     .pace-val { font-family:'Space Grotesk',sans-serif; font-size:2rem; font-weight:700; letter-spacing:-0.03em; line-height:1; }
     .pace-val span { font-size:0.9rem; font-weight:500; margin-left:2px; opacity:0.7; }
     .pace-desc { font-size:0.78rem; margin-top:0.5rem; }
 
-    .badge {
-      display: inline-block; border-radius: 20px;
-      padding: 0.2rem 0.65rem; font-size:0.72rem; font-weight:600;
-    }
+    .badge { display:inline-block; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.72rem; font-weight:600; }
 
     table { width:100%; border-collapse:collapse; font-size:0.875rem; }
     th { text-align:left; padding:0.5rem 0.75rem; color:var(--muted); font-weight:500; border-bottom:2px solid var(--border); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; }
@@ -79,22 +66,58 @@
     tr:last-child td { border-bottom:none; }
     .table-wrap { background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); overflow-x:auto; }
 
-    .detail-card {
-      background: var(--card); border-radius:14px;
-      padding:1.4rem 1.5rem; margin-bottom:0.75rem;
+    /* Calendar */
+    .week-card {
+      background: var(--card); border-radius:16px;
+      padding: 1.25rem 1.4rem; margin-bottom: 0.75rem;
       box-shadow: 0 2px 8px rgba(0,0,0,.05);
     }
-    .detail-header { display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.65rem; }
-    .detail-week { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.9rem; }
-    .detail-miles { font-size:0.8rem; color:var(--muted); margin-left:auto; }
-    .detail-key { font-size:0.88rem; font-weight:600; color:var(--ink); margin-bottom:0.4rem; }
-    .detail-body { font-size:0.83rem; color:var(--muted); line-height:1.7; }
+    .week-header {
+      display: flex; align-items: center; gap: 0.6rem;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .week-num { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.88rem; }
+    .week-date { font-size:0.8rem; color:var(--muted); }
+    .week-mi { font-size:0.8rem; font-weight:600; color:var(--muted); margin-left:auto; }
+
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 0.35rem; margin-bottom: 1rem;
+    }
+    .cal-day {
+      border-radius: 10px; padding: 0.55rem 0.3rem;
+      text-align: center; min-height: 72px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.1rem;
+    }
+    .cal-day-name {
+      font-size: 0.58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55;
+    }
+    .cal-day-miles {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.15rem; line-height: 1;
+    }
+    .cal-day-type {
+      font-size: 0.58rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.8;
+    }
+
+    .run-details { display: flex; flex-direction: column; gap: 0.35rem; }
+    .run-detail { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.82rem; }
+    .run-day { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; min-width: 28px; }
+    .run-text { color: #333; line-height: 1.4; }
 
     footer { background:var(--ink); color:#555; text-align:center; padding:2rem; font-size:0.82rem; }
     footer a { color:#888; }
-    @media (max-width:600px) {
-      .hstat { padding:0.75rem 1rem; }
-      .hstat-num { font-size:1.2rem; }
+
+    @media (max-width: 640px) {
+      .cal-grid { grid-template-columns: repeat(7, 1fr); gap: 0.2rem; }
+      .cal-day { min-height: 58px; padding: 0.4rem 0.15rem; }
+      .cal-day-miles { font-size: 0.95rem; }
+      .cal-day-type { display: none; }
+      .hstat { padding: 0.75rem 0.9rem; }
+      .hstat-num { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -110,11 +133,11 @@
   <p class="hero-sub">Hoka Chicago Half Marathon · September 27, 2026 · Built from my Strava data</p>
   <div class="hero-stats">
     <div class="hstat">
-      <span class="hstat-num">7:25</span>
+      <span class="hstat-num">6:52</span>
       <span class="hstat-label">Goal Pace</span>
     </div>
     <div class="hstat">
-      <span class="hstat-num">1:37:13</span>
+      <span class="hstat-num">1:30:00</span>
       <span class="hstat-label">Goal Finish</span>
     </div>
     <div class="hstat">
@@ -122,7 +145,7 @@
       <span class="hstat-label">Weeks</span>
     </div>
     <div class="hstat">
-      <span class="hstat-num">64</span>
+      <span class="hstat-num">72</span>
       <span class="hstat-label">Peak Miles</span>
     </div>
   </div>
@@ -132,34 +155,34 @@
 
   <section>
     <div class="sh">
-      <h2>Personal Training Paces</h2>
-      <p>Derived from your half marathon history and recent hard-effort runs — not a generic calculator.</p>
+      <h2>Training Paces</h2>
+      <p>Based on your 1:30 goal — 2 workouts + 1 long run per week, easy miles fill the rest.</p>
     </div>
     <div class="pace-grid">
-      <div class="pace-card" style="background:#FFFFFF; color:#111111;">
+      <div class="pace-card" style="background:#FFFFFF;color:#111111;">
         <div class="pace-label" style="color:#6B6B6B;">Recovery</div>
-        <div class="pace-val">9:01<span>/mi</span></div>
-        <div class="pace-desc" style="color:#6B6B6B;">After hard days / doubles</div>
+        <div class="pace-val">8:31<span>/mi</span></div>
+        <div class="pace-desc" style="color:#6B6B6B;">After hard days and 7-day weeks</div>
       </div>
-      <div class="pace-card" style="background:#FFFFFF; color:#111111;">
+      <div class="pace-card" style="background:#FFFFFF;color:#111111;">
         <div class="pace-label" style="color:#6B6B6B;">Easy</div>
-        <div class="pace-val">8:34<span>/mi</span></div>
-        <div class="pace-desc" style="color:#6B6B6B;">~80% of your weekly miles</div>
+        <div class="pace-val">8:04<span>/mi</span></div>
+        <div class="pace-desc" style="color:#6B6B6B;">~80% of weekly miles</div>
       </div>
-      <div class="pace-card" style="background:#FFFFFF; color:#111111;">
+      <div class="pace-card" style="background:#FFFFFF;color:#111111;">
         <div class="pace-label" style="color:#6B6B6B;">Long Run</div>
-        <div class="pace-val">8:19<span>/mi</span></div>
+        <div class="pace-val">7:55<span>/mi</span></div>
         <div class="pace-desc" style="color:#6B6B6B;">Default long run effort</div>
       </div>
-      <div class="pace-card" style="background:#FFFFFF; color:#111111;">
+      <div class="pace-card" style="background:#FFFFFF;color:#111111;">
         <div class="pace-label" style="color:#6B6B6B;">Tempo</div>
-        <div class="pace-val">7:43<span>/mi</span></div>
-        <div class="pace-desc" style="color:#6B6B6B;">Comfortably hard — ~20K effort</div>
+        <div class="pace-val">6:40<span>/mi</span></div>
+        <div class="pace-desc" style="color:#6B6B6B;">Threshold — faster than race pace</div>
       </div>
-      <div class="pace-card" style="background:#E85D04; color:#FFFFFF;">
+      <div class="pace-card" style="background:#E85D04;color:#FFFFFF;">
         <div class="pace-label" style="color:rgba(255,255,255,0.75);">Race Pace</div>
-        <div class="pace-val">7:25<span>/mi</span></div>
-        <div class="pace-desc" style="color:rgba(255,255,255,0.75);">Goal → 1:37:13</div>
+        <div class="pace-val">6:52<span>/mi</span></div>
+        <div class="pace-desc" style="color:rgba(255,255,255,0.75);">Goal → 1:30:00</div>
       </div>
     </div>
   </section>
@@ -167,7 +190,7 @@
   <section>
     <div class="sh">
       <h2>Half Marathon History</h2>
-      <p>All runs between 12.8–13.5 miles, fastest first.</p>
+      <p>All runs between 12.8–13.5 miles from your Strava data, fastest first.</p>
     </div>
     <div class="table-wrap">
       <table>
@@ -244,284 +267,850 @@
 
   <section>
     <div class="sh">
-      <h2>Week-by-Week Plan</h2>
-      <p>14 weeks · 6 running days/week · cutback weeks stay at 44–50mi (you don't need 28-mile recovery).</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Wk</th><th>Week of</th><th>Phase</th><th>Miles</th><th>Long</th><th>Key Workout</th></tr></thead>
-        <tbody>
-        <tr>
-          <td style="font-weight:600; color:#111;">1</td>
-          <td>Jun 17</td>
-          <td><span class="badge" style="background:#1565C018; color:#1565C0; border: 1px solid #1565C040;">Base</span></td>
-          <td style="font-weight:600;">51 mi</td>
-          <td>10 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Tempo: 2mi warmup + 3mi @ 7:43/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">2</td>
-          <td>Jun 24</td>
-          <td><span class="badge" style="background:#1565C018; color:#1565C0; border: 1px solid #1565C040;">Base</span></td>
-          <td style="font-weight:600;">52 mi</td>
-          <td>11 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Tempo: 2mi warmup + 4mi @ 7:43/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">3</td>
-          <td>Jul 1</td>
-          <td><span class="badge" style="background:#1565C018; color:#1565C0; border: 1px solid #1565C040;">Base</span></td>
-          <td style="font-weight:600;">53 mi</td>
-          <td>11 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Tempo: 2mi warmup + 5mi @ 7:43/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">4</td>
-          <td>Jul 8</td>
-          <td><span class="badge" style="background:#2E7D3218; color:#2E7D32; border: 1px solid #2E7D3240;">Cutback</span></td>
-          <td style="font-weight:600;">44 mi</td>
-          <td>10 mi</td>
-          <td style="font-size:0.82rem; color:#333;">10mi easy @ 8:19/mi</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">5</td>
-          <td>Jul 15</td>
-          <td><span class="badge" style="background:#E85D0418; color:#E85D04; border: 1px solid #E85D0440;">Build</span></td>
-          <td style="font-weight:600;">56 mi</td>
-          <td>12 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Cruise intervals: 5×1mi @ 7:43/mi, 90s jog</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">6</td>
-          <td>Jul 22</td>
-          <td><span class="badge" style="background:#E85D0418; color:#E85D04; border: 1px solid #E85D0440;">Build</span></td>
-          <td style="font-weight:600;">58 mi</td>
-          <td>12 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Cruise intervals: 6×1mi @ 7:43/mi, 90s jog</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">7</td>
-          <td>Jul 29</td>
-          <td><span class="badge" style="background:#E85D0418; color:#E85D04; border: 1px solid #E85D0440;">Build</span></td>
-          <td style="font-weight:600;">59 mi</td>
-          <td>12 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Cruise intervals: 7×1mi @ 7:43/mi, 90s jog</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">8</td>
-          <td>Aug 5</td>
-          <td><span class="badge" style="background:#2E7D3218; color:#2E7D32; border: 1px solid #2E7D3240;">Cutback</span></td>
-          <td style="font-weight:600;">45 mi</td>
-          <td>10 mi</td>
-          <td style="font-size:0.82rem; color:#333;">10mi easy @ 8:19/mi</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">9</td>
-          <td>Aug 12</td>
-          <td><span class="badge" style="background:#C6282818; color:#C62828; border: 1px solid #C6282840;">Peak</span></td>
-          <td style="font-weight:600;">62 mi</td>
-          <td>12 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">10</td>
-          <td>Aug 19</td>
-          <td><span class="badge" style="background:#C6282818; color:#C62828; border: 1px solid #C6282840;">Peak</span></td>
-          <td style="font-weight:600;">63 mi</td>
-          <td>13 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">11</td>
-          <td>Aug 26</td>
-          <td><span class="badge" style="background:#C6282818; color:#C62828; border: 1px solid #C6282840;">Peak</span></td>
-          <td style="font-weight:600;">64 mi</td>
-          <td>13 mi</td>
-          <td style="font-size:0.82rem; color:#333;">Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">12</td>
-          <td>Sep 2</td>
-          <td><span class="badge" style="background:#2E7D3218; color:#2E7D32; border: 1px solid #2E7D3240;">Cutback</span></td>
-          <td style="font-weight:600;">48 mi</td>
-          <td>10 mi</td>
-          <td style="font-size:0.82rem; color:#333;">10mi easy @ 8:19/mi</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">13</td>
-          <td>Sep 9</td>
-          <td><span class="badge" style="background:#6B6B6B18; color:#6B6B6B; border: 1px solid #6B6B6B40;">Taper</span></td>
-          <td style="font-weight:600;">42 mi</td>
-          <td>10 mi</td>
-          <td style="font-size:0.82rem; color:#333;">10mi long w/ 3mi @ 7:25/mi in the middle</td>
-        </tr>
-        <tr>
-          <td style="font-weight:600; color:#111;">14</td>
-          <td>Sep 16</td>
-          <td><span class="badge" style="background:#E85D0418; color:#E85D04; border: 1px solid #E85D0440;">Race Week</span></td>
-          <td style="font-weight:600;">25 mi</td>
-          <td>5 mi</td>
-          <td style="font-size:0.82rem; color:#333;">RACE — Hoka Chicago Half · goal 7:25/mi → 1:37:13</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section>
-    <div class="sh">
-      <h2>Daily Breakdown</h2>
-      <p>What each week actually looks like, day by day.</p>
+      <h2>14-Week Calendar</h2>
+      <p>2 workouts + 1 long run per week · 4 seven-day weeks at peak · cutbacks at ~83% volume.</p>
     </div>
     
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 1 · Jun 17</span>
-          <span class="badge" style="background:#1565C018; color:#1565C0; border:1px solid #1565C040;">Base</span>
-          <span class="detail-miles">51 mi · Long: 10 mi</span>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 1</span>
+          <span class="week-date">Jun 22</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">52 mi total</span>
         </div>
-        <div class="detail-key">🎯 Tempo: 2mi warmup + 3mi @ 7:43/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Wed/Fri: 7–8mi easy @ 8:34/mi. Tue: tempo workout above. Thu: 10mi easy medium-long. Sun: 10.5mi long @ 8:19/mi, no pace work yet.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 2 · Jun 24</span>
-          <span class="badge" style="background:#1565C018; color:#1565C0; border:1px solid #1565C040;">Base</span>
-          <span class="detail-miles">52 mi · Long: 11 mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Long</div>
+          </div>
         </div>
-        <div class="detail-key">🎯 Tempo: 2mi warmup + 4mi @ 7:43/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Wed/Fri: 7–8mi easy @ 8:34/mi. Tue: tempo workout above. Thu: 10mi easy medium-long. Sun: 10.8mi long @ 8:19/mi, no pace work yet.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 3 · Jul 1</span>
-          <span class="badge" style="background:#1565C018; color:#1565C0; border:1px solid #1565C040;">Base</span>
-          <span class="detail-miles">53 mi · Long: 11 mi</span>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">9mi · 2mi WU + 4mi @ 6:40/mi + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">10mi · 10mi easy @ 8:04/mi + 6 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">10mi · 10mi long @ 7:55/mi — conversation pace</span>
+          </div>
         </div>
-        <div class="detail-key">🎯 Tempo: 2mi warmup + 5mi @ 7:43/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Wed/Fri: 7–8mi easy @ 8:34/mi. Tue: tempo workout above. Thu: 10mi easy medium-long. Sun: 11.0mi long @ 8:19/mi, no pace work yet.</div>
       </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 4 · Jul 8</span>
-          <span class="badge" style="background:#2E7D3218; color:#2E7D32; border:1px solid #2E7D3240;">Cutback</span>
-          <span class="detail-miles">44 mi · Long: 10 mi</span>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 2</span>
+          <span class="week-date">Jun 29</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">56 mi total</span>
         </div>
-        <div class="detail-key">🎯 10mi easy @ 8:19/mi</div>
-        <div class="detail-body">Still running 6 days but everything easy. One shortened quality session: 3mi tempo @ 7:43/mi. Mon–Sat: 6–8mi easy. Sun: 10mi long. Let the adaptation land.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 5 · Jul 15</span>
-          <span class="badge" style="background:#E85D0418; color:#E85D04; border:1px solid #E85D0440;">Build</span>
-          <span class="detail-miles">56 mi · Long: 12 mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Long</div>
+          </div>
         </div>
-        <div class="detail-key">🎯 Cruise intervals: 5×1mi @ 7:43/mi, 90s jog</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7mi easy. Wed: 10mi easy. Tue: intervals above. Thu: 10–11mi medium-long. Sun: 11.5mi long, last 3mi @ 8:07/mi. Start practicing race fueling — gel every 4 miles.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 6 · Jul 22</span>
-          <span class="badge" style="background:#E85D0418; color:#E85D04; border:1px solid #E85D0440;">Build</span>
-          <span class="detail-miles">58 mi · Long: 12 mi</span>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">10mi · 2mi WU + 5mi @ 6:40/mi + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">11mi · 11mi easy @ 8:04/mi + 6 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">10mi · 10mi long @ 7:55/mi — conversation pace</span>
+          </div>
         </div>
-        <div class="detail-key">🎯 Cruise intervals: 6×1mi @ 7:43/mi, 90s jog</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7mi easy. Wed: 10mi easy. Tue: intervals above. Thu: 10–11mi medium-long. Sun: 11.7mi long, last 3mi @ 8:07/mi. Start practicing race fueling — gel every 4 miles.</div>
       </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 7 · Jul 29</span>
-          <span class="badge" style="background:#E85D0418; color:#E85D04; border:1px solid #E85D0440;">Build</span>
-          <span class="detail-miles">59 mi · Long: 12 mi</span>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 3</span>
+          <span class="week-date">Jul 6</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">60 mi total</span>
         </div>
-        <div class="detail-key">🎯 Cruise intervals: 7×1mi @ 7:43/mi, 90s jog</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7mi easy. Wed: 10mi easy. Tue: intervals above. Thu: 10–11mi medium-long. Sun: 11.9mi long, last 3mi @ 8:07/mi. Start practicing race fueling — gel every 4 miles.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 8 · Aug 5</span>
-          <span class="badge" style="background:#2E7D3218; color:#2E7D32; border:1px solid #2E7D3240;">Cutback</span>
-          <span class="detail-miles">45 mi · Long: 10 mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Long</div>
+          </div>
         </div>
-        <div class="detail-key">🎯 10mi easy @ 8:19/mi</div>
-        <div class="detail-body">Still running 6 days but everything easy. One shortened quality session: 3mi tempo @ 7:43/mi. Mon–Sat: 6–8mi easy. Sun: 10mi long. Let the adaptation land.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 9 · Aug 12</span>
-          <span class="badge" style="background:#C6282818; color:#C62828; border:1px solid #C6282840;">Peak</span>
-          <span class="detail-miles">62 mi · Long: 12 mi</span>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 3mi WU + 5mi @ 6:40/mi + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">12mi · 12mi easy @ 8:04/mi + 6 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">11mi · 11mi long @ 7:55/mi — conversation pace</span>
+          </div>
         </div>
-        <div class="detail-key">🎯 Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7–8mi easy. Wed: 10mi easy. Tue: workout above. Thu: 10mi with strides. Sun: 12.4mi long with 4–5mi @ 7:34/mi in the middle. Wear race shoes. Simulate race morning. Nail the fueling.</div>
       </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 10 · Aug 19</span>
-          <span class="badge" style="background:#C6282818; color:#C62828; border:1px solid #C6282840;">Peak</span>
-          <span class="detail-miles">63 mi · Long: 13 mi</span>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 4</span>
+          <span class="week-date">Jul 13</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">48 mi total</span>
         </div>
-        <div class="detail-key">🎯 Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7–8mi easy. Wed: 10mi easy. Tue: workout above. Thu: 10mi with strides. Sun: 12.6mi long with 4–5mi @ 7:34/mi in the middle. Wear race shoes. Simulate race morning. Nail the fueling.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 11 · Aug 26</span>
-          <span class="badge" style="background:#C6282818; color:#C62828; border:1px solid #C6282840;">Peak</span>
-          <span class="detail-miles">64 mi · Long: 13 mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Long</div>
+          </div>
         </div>
-        <div class="detail-key">🎯 Race-specific: 2mi warmup + 7mi @ 7:31/mi + 1mi cool</div>
-        <div class="detail-body">6 days running. Mon/Fri: 7–8mi easy. Wed: 10mi easy. Tue: workout above. Thu: 10mi with strides. Sun: 12.8mi long with 4–5mi @ 7:34/mi in the middle. Wear race shoes. Simulate race morning. Nail the fueling.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 12 · Sep 2</span>
-          <span class="badge" style="background:#2E7D3218; color:#2E7D32; border:1px solid #2E7D3240;">Cutback</span>
-          <span class="detail-miles">48 mi · Long: 10 mi</span>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">9mi · 2mi WU + 3mi @ 6:40/mi + 4mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">9mi · 9mi easy @ 8:04/mi + 4 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">9mi · 9mi long @ 7:55/mi — conversation pace</span>
+          </div>
         </div>
-        <div class="detail-key">🎯 10mi easy @ 8:19/mi</div>
-        <div class="detail-body">Still running 6 days but everything easy. One shortened quality session: 3mi tempo @ 7:43/mi. Mon–Sat: 6–8mi easy. Sun: 10mi long. Let the adaptation land.</div>
       </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 13 · Sep 9</span>
-          <span class="badge" style="background:#6B6B6B18; color:#6B6B6B; border:1px solid #6B6B6B40;">Taper</span>
-          <span class="detail-miles">42 mi · Long: 10 mi</span>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 5</span>
+          <span class="week-date">Jul 20</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+          
+          <span class="week-mi">62 mi total</span>
         </div>
-        <div class="detail-key">🎯 10mi long w/ 3mi @ 7:25/mi in the middle</div>
-        <div class="detail-body">Drop volume to ~42mi, keep intensity. One quality session mid-week: 6×800m @ 7:16/mi. Mon/Wed/Fri easy 5–6mi. Sat easy 5mi. Legs should feel antsy by Sunday.</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-header">
-          <span class="detail-week">Week 14 · Sep 16</span>
-          <span class="badge" style="background:#E85D0418; color:#E85D04; border:1px solid #E85D0440;">Race Week</span>
-          <span class="detail-miles">25 mi · Long: 5 mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long</div>
+          </div>
         </div>
-        <div class="detail-key">🎯 RACE — Hoka Chicago Half · goal 7:25/mi → 1:37:13</div>
-        <div class="detail-body">Mon: 4mi easy · Tue: 3mi easy + 4×100m strides · Wed: 3mi easy · Thu: off · Fri: 20min shakeout · Sat: off · Sun: RACE. Go get it.</div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 2mi WU + 4×1mi @ 6:40/mi (90s jog) + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">12mi · 12mi: easy + 2mi @ 6:58/mi in the middle</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">12mi · 12mi: 10mi @ 7:55/mi + last 2mi @ 7:04/mi</span>
+          </div>
+        </div>
       </div>
-  </section>
-
-  <section>
-    <div class="sh"><h2>Notes</h2></div>
-    <div class="table-wrap" style="padding:1.5rem 1.75rem;">
-      <p style="font-size:0.88rem; color:#333; line-height:1.9; margin-bottom:0.6rem;">
-        <strong>Easy really means easy.</strong> If easy pace feels embarrassingly slow, your hard days are working.
-        No faster than 8:34/mi on recovery days.
-      </p>
-      <p style="font-size:0.88rem; color:#333; line-height:1.9; margin-bottom:0.6rem;">
-        <strong>Fuel every long run ≥ 10 miles.</strong> Gel every 4 miles, same brand you'll race with.
-        Your gut needs training too.
-      </p>
-      <p style="font-size:0.88rem; color:#333; line-height:1.9; margin-bottom:0.6rem;">
-        <strong>Chicago weather is in your favor.</strong> Your Strava data shows you run ~15–20 sec/mi slower
-        above 70°F. Late September in Chicago typically runs 55–65°F — optimal race conditions.
-      </p>
-      <p style="font-size:0.88rem; color:#333; line-height:1.9;">
-        <strong>The taper feels terrible.</strong> You'll feel slow, heavy, and anxious in weeks 13–14.
-        That's normal. Trust the process.
-      </p>
-    </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 6</span>
+          <span class="week-date">Jul 27</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+          
+          <span class="week-mi">65 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">13</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">13</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">12mi · 2mi WU + 5×1mi @ 6:40/mi (90s jog) + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">13mi · 13mi: easy + 3mi @ 6:58/mi in the middle</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">13mi · 13mi: 10mi @ 7:55/mi + last 3mi @ 7:04/mi</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 7</span>
+          <span class="week-date">Aug 3</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+           <span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">68 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">4</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 2mi WU + 5×1mi @ 6:40/mi (90s jog) + 4mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">12mi · 12mi: easy + 4mi @ 6:58/mi in the middle</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">14mi · 14mi: 10mi @ 7:55/mi + last 4mi @ 7:04/mi</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 8</span>
+          <span class="week-date">Aug 10</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">55 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">10mi · 2mi WU + 4×1mi @ 6:40/mi (90s jog) + 2mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">10mi · 10mi easy @ 8:04/mi + 4 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">12mi · 12mi long @ 7:55/mi — comfortable</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 9</span>
+          <span class="week-date">Aug 17</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">68 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 2mi WU + 2×3mi @ 6:49/mi (2min jog) + 1mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">11mi · 11mi: 4mi easy + 4mi @ 6:58/mi + 3mi easy</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">14mi · 14mi: 4mi easy → 6mi @ 7:46/mi → 4mi easy</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 10</span>
+          <span class="week-date">Aug 24</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">70 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 2mi WU + 2×3mi @ 6:49/mi (2min jog) + 2mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">12mi · 12mi: 3mi easy + 5mi @ 6:52/mi + 4mi easy</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">14mi · 14mi progression: 4mi easy → 6mi @ 7:43/mi → 4mi @ 7:04/mi</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 11</span>
+          <span class="week-date">Aug 31</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">72 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">12mi · 2mi WU + 8mi @ 6:52/mi + 2mi CD — race sim</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">12mi · 12mi: 2mi easy + 6mi @ 6:52/mi + 4mi easy</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">14mi · 14mi: 4mi easy → 6mi @ 7:04/mi → 4mi @ 6:58/mi</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 12</span>
+          <span class="week-date">Sep 7</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">60 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#E8F4FD;color:#1565C0;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Medium-Long</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">11mi · 2mi WU + 4×1mi @ 6:40/mi (90s jog) + 3mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#1565C0;">Thu</span>
+            <span class="run-text">11mi · 11mi: easy + 3mi @ 7:01/mi in the middle</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">12mi · 12mi long @ 7:55/mi — reset after peak</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 13</span>
+          <span class="week-date">Sep 14</span>
+          <span class="badge" style="background:#6B6B6B18;color:#6B6B6B;border:1px solid #6B6B6B40;">Taper</span>
+          
+          <span class="week-mi">42 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">6</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">6</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFF4EE;color:#E85D04;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Workout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#F3E5F5;color:#7B1FA2;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Long</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Tue</span>
+            <span class="run-text">10mi · 2mi WU + 6×800m @ 6:37/mi (90s jog) + 2mi CD</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#E85D04;">Thu</span>
+            <span class="run-text">8mi · 1mi WU + 4mi @ 6:52/mi + 3mi CD — stay sharp</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#7B1FA2;">Sun</span>
+            <span class="run-text">7mi · 7mi easy @ 7:55/mi — legs should feel great</span>
+          </div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 14</span>
+          <span class="week-date">Sep 21</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Race Week</span>
+          
+          <span class="week-mi">25 mi total</span>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">4</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#FFFDE7;color:#B45309;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">3</div>
+            <div class="cal-day-type">Shakeout</div>
+          </div>
+          <div class="cal-day" style="background:#F0FAF1;color:#2E7D32;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">3</div>
+            <div class="cal-day-type">Easy</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#FFFDE7;color:#B45309;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">2</div>
+            <div class="cal-day-type">Shakeout</div>
+          </div>
+          <div class="cal-day" style="background:#F5F5F5;color:#BDBDBD;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
+          </div>
+          <div class="cal-day" style="background:#E85D04;color:#FFFFFF;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">13.1</div>
+            <div class="cal-day-type">Race</div>
+          </div>
+        </div>
+        <div class="run-details">
+          <div class="run-detail">
+            <span class="run-day" style="color:#B45309;">Tue</span>
+            <span class="run-text">3mi · Easy + 4×100m strides at race effort</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#B45309;">Fri</span>
+            <span class="run-text">2mi · 2mi shakeout + 2 strides</span>
+          </div>
+          <div class="run-detail">
+            <span class="run-day" style="color:#FFFFFF;">Sun</span>
+            <span class="run-text">13.1mi · RACE — goal 6:52/mi → 1:30:00</span>
+          </div>
+        </div>
+      </div>
   </section>
 
 </main>
