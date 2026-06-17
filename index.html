@@ -3,254 +3,331 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Running Performance Analytics</title>
+  <title>Running Performance Analytics — Kate Connolly</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --orange:      #FC4C02;
-      --blue:        #1565C0;
-      --dark:        #111827;
-      --gray:        #6b7280;
-      --light-gray:  #f9fafb;
-      --border:      #e5e7eb;
-      --white:       #ffffff;
-      --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-      --shadow-md:   0 4px 6px rgba(0,0,0,.06), 0 10px 15px rgba(0,0,0,.04);
+      --orange:  #E85D04;
+      --red:     #C62828;
+      --green:   #2E7D32;
+      --ink:     #111111;
+      --muted:   #6B6B6B;
+      --bg:      #F5F3EF;
+      --card:    #FFFFFF;
+      --border:  #E2DDD8;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--light-gray);
-      color: var(--dark);
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
       line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, nav .wordmark {
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     /* ── Nav ──────────────────────────────────────────────────────────── */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(245, 243, 239, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
-      height: 56px;
+      height: 52px;
       display: flex; align-items: center; justify-content: space-between;
     }
+    .wordmark {
+      font-weight: 700; font-size: 0.92rem; color: var(--ink);
+      text-decoration: none; letter-spacing: -0.01em;
+    }
+    .wordmark span { color: var(--orange); }
 
-    .nav-logo {
-      font-weight: 700; font-size: 0.9rem; color: var(--dark);
-      text-decoration: none; display: flex; align-items: center; gap: 0.55rem;
+    .gh-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.82rem; font-weight: 500; color: var(--muted);
+      text-decoration: none; transition: color .15s;
     }
-    .logo-dot {
-      width: 9px; height: 9px; background: var(--orange);
-      border-radius: 50%; display: inline-block; flex-shrink: 0;
-    }
-
-    .btn-gh {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      background: var(--dark); color: #fff; padding: 0.4rem 0.95rem;
-      border-radius: 7px; font-size: 0.82rem; font-weight: 500;
-      text-decoration: none; transition: background .15s;
-    }
-    .btn-gh:hover { background: #374151; }
-    .btn-gh svg { width: 15px; height: 15px; fill: currentColor; }
+    .gh-link:hover { color: var(--ink); }
+    .gh-link svg { width: 16px; height: 16px; fill: currentColor; }
 
     /* ── Hero ─────────────────────────────────────────────────────────── */
     .hero {
-      background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #1c1917 100%);
-      color: #fff; padding: 5rem 2rem 4rem; text-align: center;
+      background: var(--ink);
+      color: #fff;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero-badge {
-      display: inline-block;
-      background: rgba(252,76,2,.15); border: 1px solid rgba(252,76,2,.35);
-      color: #fb923c; font-size: 0.72rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: .3rem .85rem; border-radius: 20px; margin-bottom: 1.4rem;
+    /* subtle grain texture overlay */
+    .hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.4;
     }
+
+    .hero-inner { position: relative; z-index: 1; }
 
     .hero h1 {
-      font-size: clamp(2.1rem, 5.5vw, 3.4rem);
-      font-weight: 800; letter-spacing: -.025em; line-height: 1.13;
-      margin-bottom: 1.1rem;
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      margin-bottom: 1.2rem;
     }
     .hero h1 em { font-style: normal; color: var(--orange); }
 
     .hero-sub {
-      font-size: 1.05rem; color: #94a3b8; max-width: 560px;
-      margin: 0 auto 2.2rem;
+      font-size: 1.05rem;
+      color: #A0A0A0;
+      max-width: 480px;
+      margin: 0 auto 2.8rem;
+      line-height: 1.65;
     }
 
-    .stats-strip {
-      display: flex; justify-content: center; flex-wrap: wrap; gap: .65rem;
-      margin-bottom: 2.2rem;
+    .hero-stats {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
     }
-    .stat-pill {
-      display: flex; align-items: center; gap: .45rem;
-      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-      border-radius: 20px; padding: .4rem 1rem; font-size: .88rem;
+    .hstat {
+      padding: 1rem 1.5rem;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
     }
-    .stat-pill strong { color: #fff; font-weight: 600; }
-    .stat-pill span   { color: #94a3b8; }
+    .hstat:last-child { border-right: none; }
+    .hstat-num {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .hstat-label {
+      display: block;
+      font-size: 0.72rem;
+      color: #707070;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 0.2rem;
+    }
 
-    .hero-links { display: flex; justify-content: center; gap: .75rem; flex-wrap: wrap; }
-    .hero-btn {
-      padding: .6rem 1.4rem; border-radius: 8px; font-size: .9rem;
-      font-weight: 600; text-decoration: none; transition: all .15s;
+    .hero-cta { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.6rem 1.35rem; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: all .15s;
     }
-    .hero-btn-primary {
-      background: var(--orange); color: #fff;
+    .btn-fill { background: var(--orange); color: #fff; }
+    .btn-fill:hover { background: #cf5003; }
+    .btn-ghost {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #ccc;
     }
-    .hero-btn-primary:hover { background: #e84402; }
-    .hero-btn-outline {
-      background: transparent; color: #e2e8f0;
-      border: 1px solid rgba(255,255,255,.2);
-    }
-    .hero-btn-outline:hover { background: rgba(255,255,255,.07); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
-    /* ── Page sections ────────────────────────────────────────────────── */
-    main { max-width: 1180px; margin: 0 auto; padding: 3.5rem 1.5rem; }
-    section { margin-bottom: 4.5rem; }
-
-    .section-header { margin-bottom: 1.6rem; }
-    .section-header h2 {
-      font-size: 1.45rem; font-weight: 700; color: var(--dark); margin-bottom: .3rem;
+    /* ── About strip ──────────────────────────────────────────────────── */
+    .about {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem;
     }
-    .section-header p { color: var(--gray); font-size: .93rem; max-width: 680px; }
+    .about-inner {
+      max-width: 720px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .about-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+      .about-right { display: none; }
+    }
+    .about h2 {
+      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.7rem;
+      letter-spacing: -0.02em;
+    }
+    .about p {
+      font-size: 0.93rem; color: var(--muted); line-height: 1.75;
+    }
+    .about p + p { margin-top: 0.65rem; }
+
+    .about-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.5rem; font-weight: 700; color: var(--orange);
+      letter-spacing: -0.04em; line-height: 1;
+    }
+    .about-num-label {
+      font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;
+    }
+
+    /* ── Page body ────────────────────────────────────────────────────── */
+    main { max-width: 1160px; margin: 0 auto; padding: 4rem 1.5rem; }
+    section { margin-bottom: 5rem; }
+
+    .sh { margin-bottom: 1.8rem; }
+    .sh h2 {
+      font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+    }
+    .sh p { font-size: 0.92rem; color: var(--muted); max-width: 600px; }
 
     /* ── Chart cards ──────────────────────────────────────────────────── */
     .card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden;
-      box-shadow: var(--shadow-sm); transition: box-shadow .2s, transform .2s;
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s;
     }
-    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.09);
+    }
     .card img { width: 100%; height: auto; display: block; }
 
-    .card-cap {
-      padding: .85rem 1.1rem; border-top: 1px solid var(--border);
+    .cap {
+      padding: 0.9rem 1.15rem;
+      border-top: 1px solid #F0EDE8;
     }
-    .card-cap strong {
-      display: block; font-size: .88rem; font-weight: 600;
-      color: var(--dark); margin-bottom: .2rem;
+    .cap strong {
+      display: block; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem; font-weight: 600; margin-bottom: 0.15rem;
     }
-    .card-cap span { font-size: .8rem; color: var(--gray); }
+    .cap span { font-size: 0.78rem; color: var(--muted); }
 
-    /* ── Grid layouts ─────────────────────────────────────────────────── */
+    /* ── Grids ────────────────────────────────────────────────────────── */
     .g2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
-      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+      gap: 1.25rem;
     }
-
-    @media (max-width: 720px) {
+    @media (max-width: 700px) {
       .g2 { grid-template-columns: 1fr; }
-      .model-grid { grid-template-columns: 1fr !important; }
+      .model-split { grid-template-columns: 1fr !important; }
     }
 
     /* ── Model section ────────────────────────────────────────────────── */
-    .model-grid {
+    .model-split {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1.2rem; align-items: start;
+      gap: 1.25rem; align-items: start;
     }
 
-    .explainer {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.75rem; box-shadow: var(--shadow-sm);
+    .panel {
+      background: var(--card);
+      border-radius: 16px; padding: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
-    .explainer h3 { font-size: 1rem; font-weight: 700; margin-bottom: .65rem; }
-    .explainer p {
-      font-size: .875rem; color: var(--gray); line-height: 1.7;
-      margin-bottom: .9rem;
+    .panel h3 {
+      font-size: 0.95rem; font-weight: 700; margin-bottom: 0.6rem;
     }
-    .explainer p:last-child { margin-bottom: 0; }
+    .panel p {
+      font-size: 0.875rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: 0.85rem;
+    }
+    .panel p:last-child { margin-bottom: 0; }
 
-    .finding {
-      background: #fff7f0; border: 1px solid #fed7aa;
+    .callout {
+      background: #FFF4EE;
       border-left: 3px solid var(--orange);
-      border-radius: 0 8px 8px 0; padding: .85rem 1rem;
-      margin: .9rem 0; font-size: .845rem; color: #7c2d12; line-height: 1.65;
+      border-radius: 0 10px 10px 0;
+      padding: 0.9rem 1rem;
+      margin: 0.9rem 0;
+      font-size: 0.855rem;
+      color: #7C2D12;
+      line-height: 1.65;
     }
-    .finding strong { color: #c2410c; }
+    .callout strong { color: #C2410C; }
 
-    table.feats {
+    table.ft {
       width: 100%; border-collapse: collapse;
-      font-size: .83rem; margin-top: .65rem;
+      font-size: 0.83rem; margin-top: 0.65rem;
     }
-    table.feats th {
-      text-align: left; padding: .35rem .55rem;
-      color: var(--gray); font-weight: 500;
+    table.ft th {
+      text-align: left; padding: 0.35rem 0.5rem;
+      color: var(--muted); font-weight: 500;
       border-bottom: 1px solid var(--border);
     }
-    table.feats td {
-      padding: .35rem .55rem; border-bottom: 1px solid #f3f4f6;
+    table.ft td {
+      padding: 0.35rem 0.5rem;
+      border-bottom: 1px solid #F5F3EF;
       vertical-align: top;
     }
-    table.feats tr:last-child td { border-bottom: none; }
-    table.feats .fc { font-family: monospace; color: var(--blue); font-size: .8rem; }
+    table.ft tr:last-child td { border-bottom: none; }
+    table.ft .fc { font-family: monospace; color: #1565C0; font-size: 0.79rem; }
+
+    .pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .pill {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.25rem 0.7rem;
+      font-size: 0.76rem; font-weight: 500; color: #444;
+    }
 
     /* ── Method cards ─────────────────────────────────────────────────── */
     .method-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem;
     }
     .method-card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.5rem; box-shadow: var(--shadow-sm);
+      background: var(--card); border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
-    .step {
-      display: inline-block; background: var(--orange); color: #fff;
-      font-size: .68rem; font-weight: 700; letter-spacing: .06em;
-      text-transform: uppercase; padding: .2rem .55rem; border-radius: 5px;
-      margin-bottom: .6rem;
+    .step-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--orange); margin-bottom: 0.5rem;
     }
-    .method-card h3 { font-size: .92rem; font-weight: 700; margin-bottom: .45rem; }
-    .method-card p  { font-size: .845rem; color: var(--gray); line-height: 1.65; }
+    .method-card h3 {
+      font-size: 0.95rem; font-weight: 700; margin-bottom: 0.45rem;
+    }
+    .method-card p {
+      font-size: 0.85rem; color: var(--muted); line-height: 1.65;
+    }
     .method-card code {
-      background: #f3f4f6; border: 1px solid var(--border);
-      border-radius: 4px; padding: .1em .35em;
-      font-size: .78rem; color: var(--blue);
-    }
-
-    /* ── Stack & tech pills ────────────────────────────────────────────── */
-    .tech-row {
-      display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem;
-    }
-    .tech-pill {
-      background: #f3f4f6; border: 1px solid var(--border);
-      border-radius: 20px; padding: .3rem .75rem;
-      font-size: .78rem; font-weight: 500; color: #374151;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: .1em .3em;
+      font-size: 0.79rem; color: #1565C0;
     }
 
     /* ── Footer ───────────────────────────────────────────────────────── */
     footer {
-      background: var(--dark); color: #9ca3af;
+      background: var(--ink); color: #555;
       text-align: center; padding: 2.5rem 2rem;
-      font-size: .84rem; line-height: 1.8;
+      font-size: 0.83rem; line-height: 1.9;
     }
-    footer a { color: #d1d5db; }
+    footer a { color: #888; text-underline-offset: 3px; }
   </style>
 </head>
 
 <body>
 
-<!-- ── Navigation ─────────────────────────────────────────────────────── -->
+<!-- Nav ─────────────────────────────────────────────────────────────── -->
 <nav>
-  <a href="#" class="nav-logo">
-    <span class="logo-dot"></span>
-    Running Performance Analytics
-  </a>
+  <a href="#" class="wordmark">Kate<span>.</span>run</a>
   <a href="https://github.com/kateeconnolly/running-performance-analytics"
-     class="btn-gh" target="_blank" rel="noopener">
+     class="gh-link" target="_blank" rel="noopener">
     <svg viewBox="0 0 16 16">
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
@@ -261,218 +338,258 @@
                .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
                0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
     </svg>
-    View on GitHub
+    GitHub
   </a>
 </nav>
 
-<!-- ── Hero ───────────────────────────────────────────────────────────── -->
+<!-- Hero ────────────────────────────────────────────────────────────── -->
 <header class="hero">
-  <div class="hero-badge">Data Science Project</div>
-  <h1>Running <em>Performance</em><br>Analytics</h1>
-  <p class="hero-sub">
-    I run a lot and I keep everything on Strava. This project digs into that data —
-    training trends, weather effects on pace, and a model that tries (and interestingly fails)
-    to predict how fast I'll run.
-  </p>
+  <div class="hero-inner">
+    <h1>Running<br><em>Performance</em><br>Analytics</h1>
+    <p class="hero-sub">
+      I run a lot and keep everything on Strava.<br>
+      This is what 4.8 years of data looks like.
+    </p>
 
-  <div class="stats-strip">
-    <div class="stat-pill"><strong>1,225</strong> <span>runs</span></div>
-    <div class="stat-pill"><strong>5,297</strong> <span>miles</span></div>
-    <div class="stat-pill"><strong>4.8 yrs</strong> <span>of data</span></div>
-    <div class="stat-pill"><strong>8:39</strong> <span>avg pace</span></div>
-    <div class="stat-pill"><strong>208</strong> <span>active weeks</span></div>
-  </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <span class="hstat-num">1,225</span>
+        <span class="hstat-label">Runs</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">5,297</span>
+        <span class="hstat-label">Miles</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">8:39</span>
+        <span class="hstat-label">Avg Pace</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">208</span>
+        <span class="hstat-label">Weeks</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">23</span>
+        <span class="hstat-label">Locations</span>
+      </div>
+    </div>
 
-  <div class="hero-links">
-    <a href="#charts"
-       class="hero-btn hero-btn-primary">View charts ↓</a>
-    <a href="https://github.com/kateeconnolly/running-performance-analytics"
-       class="hero-btn hero-btn-outline" target="_blank" rel="noopener">
-      Source code
-    </a>
+    <div class="hero-cta">
+      <a href="#charts" class="btn btn-fill">See the data ↓</a>
+      <a href="https://github.com/kateeconnolly/running-performance-analytics"
+         class="btn btn-ghost" target="_blank" rel="noopener">Source code</a>
+    </div>
   </div>
 </header>
 
-<!-- ── Main content ───────────────────────────────────────────────────── -->
+<!-- About ───────────────────────────────────────────────────────────── -->
+<div class="about">
+  <div class="about-inner">
+    <div class="about-left">
+      <h2>About this project</h2>
+      <p>
+        I'm Kate — a student at the University of Chicago and a runner.
+        I've been logging every run on Strava since fall 2021, mostly
+        around home and Chicago, with a few runs in South Carolina and
+        Europe thrown in.
+      </p>
+      <p>
+        This project started because I wanted to actually understand my
+        training data, not just look at the Strava app. I built a Python
+        pipeline from scratch to clean the data, engineer features,
+        build a pace prediction model, and visualize everything.
+      </p>
+    </div>
+    <div class="about-right">
+      <div class="about-num">5,297</div>
+      <div class="about-num-label">miles logged since Sep 2021</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts ──────────────────────────────────────────────────────────── -->
 <main id="charts">
 
-  <!-- Training Volume -->
+  <!-- Volume -->
   <section>
-    <div class="section-header">
+    <div class="sh">
       <h2>Training Volume</h2>
-      <p>Almost 5 years of weekly mileage. The rolling averages smooth out the noise and make it easier to see when I was actually building fitness vs. just getting runs in.</p>
+      <p>Almost 5 years of weekly mileage. The rolling averages smooth out the noise and show when I was actually building fitness vs. just getting runs in.</p>
     </div>
     <div class="g2">
       <div class="card">
-        <img src="figures/weekly_mileage.png"
-             alt="Weekly mileage bar chart with 4-week rolling average" loading="lazy" />
-        <div class="card-cap">
+        <img src="figures/weekly_mileage.png" alt="Weekly mileage over time" loading="lazy" />
+        <div class="cap">
           <strong>Weekly Mileage</strong>
-          <span>Bars = weekly total · line = 4-week rolling average per week</span>
+          <span>Bars = weekly total · line = 4-week rolling average</span>
         </div>
       </div>
       <div class="card">
-        <img src="figures/rolling_mileage.png"
-             alt="Rolling 4-week and 8-week mileage totals" loading="lazy" />
-        <div class="card-cap">
+        <img src="figures/rolling_mileage.png" alt="4-week and 8-week rolling mileage" loading="lazy" />
+        <div class="cap">
           <strong>Rolling Training Load</strong>
-          <span>Cumulative mileage over 4-week and 8-week windows</span>
+          <span>4-week and 8-week cumulative windows</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Long Run & Pace Distribution -->
+  <!-- Long runs + distribution -->
   <section>
-    <div class="section-header">
+    <div class="sh">
       <h2>Long Runs &amp; Pace Distribution</h2>
-      <p>How my long runs have changed over time, and where my pace naturally clusters. I split runs into easy, moderate, and hard based on where they fall in my own pace distribution — no heart rate monitor needed.</p>
+      <p>How my long runs have changed over time, and where my pace naturally falls. Runs are split into easy, moderate, and hard based on pace tertiles across the full dataset.</p>
     </div>
     <div class="g2">
       <div class="card">
-        <img src="figures/long_run_progression.png"
-             alt="Longest run per week scatter plot with linear trend" loading="lazy" />
-        <div class="card-cap">
+        <img src="figures/long_run_progression.png" alt="Long run progression over time" loading="lazy" />
+        <div class="cap">
           <strong>Long Run Progression</strong>
-          <span>Longest run per active week · dashed line = linear trend</span>
+          <span>Longest run per active week · dashed = linear trend</span>
         </div>
       </div>
       <div class="card">
-        <img src="figures/pace_distribution.png"
-             alt="Pace KDE distribution with effort zone shading" loading="lazy" />
-        <div class="card-cap">
-          <strong>Pace Distribution with Effort Zones</strong>
-          <span>Kernel density estimate · shaded zones = Hard / Moderate / Easy tertiles</span>
+        <img src="figures/pace_distribution.png" alt="Pace distribution with effort zones" loading="lazy" />
+        <div class="cap">
+          <strong>Pace Distribution</strong>
+          <span>Shaded zones = Hard / Moderate / Easy pace tertiles</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Pace Over Time -->
+  <!-- Pace over time -->
   <section>
-    <div class="section-header">
+    <div class="sh">
       <h2>Pace Over Time</h2>
-      <p>Every run, plotted. Bigger dots are longer runs. The trend line is the clearest thing in the whole dataset — my pace has been getting faster.</p>
+      <p>Every run, plotted. Bigger dots are longer runs. The trend line is the most interesting thing here — my pace has been getting faster.</p>
     </div>
     <div class="card">
-      <img src="figures/pace_over_time.png"
-           alt="Scatter of all runs over time coloured by effort level" loading="lazy" />
-      <div class="card-cap">
-        <strong>Pace Over Time — all 1,225 runs</strong>
-        <span>Colour = effort level · size ∝ run distance · line = 30-day rolling average · y-axis inverted (faster = higher)</span>
+      <img src="figures/pace_over_time.png" alt="All runs coloured by effort over time" loading="lazy" />
+      <div class="cap">
+        <strong>All 1,225 runs</strong>
+        <span>Colour = effort level · dot size ∝ distance · line = 30-day rolling average · y-axis inverted (lower = faster)</span>
       </div>
     </div>
   </section>
 
-  <!-- Pace Prediction Model -->
+  <!-- Weather -->
   <section>
-    <div class="section-header">
+    <div class="sh">
+      <h2>Pace vs. Temperature</h2>
+      <p>Historical weather for each run pulled from Open-Meteo using the GPS start coordinates. Temperature and humidity both ended up in the model as features.</p>
+    </div>
+    <div class="card">
+      <img src="figures/pace_vs_temperature.png" alt="Pace vs temperature scatter" loading="lazy" />
+      <div class="cap">
+        <strong>Pace vs. Temperature — 813 outdoor runs</strong>
+        <span>Weather fetched from Open-Meteo API · colour = effort level · dashed = trend</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Model -->
+  <section>
+    <div class="sh">
       <h2>Can I Predict My Pace?</h2>
       <p>I built a model to see if recent training data could predict how fast I'd run. The honest answer: not really. But why it fails is more interesting than if it had worked.</p>
     </div>
-    <div class="model-grid">
+    <div class="model-split">
       <div class="card">
-        <img src="figures/pace_prediction.png"
-             alt="Actual vs predicted pace scatter plot, train and test sets" loading="lazy" />
-        <div class="card-cap">
-          <strong>Actual vs. Predicted Pace (Ridge Regression)</strong>
-          <span>Points on the dashed diagonal = perfect prediction · blue = train · red = test</span>
+        <img src="figures/pace_prediction.png" alt="Actual vs predicted pace" loading="lazy" />
+        <div class="cap">
+          <strong>Actual vs. Predicted Pace</strong>
+          <span>Blue = train set · red = test set · dashed = perfect prediction</span>
         </div>
       </div>
 
-      <div class="explainer">
-        <h3>How it works</h3>
-        <p>I used Ridge regression to predict pace from training-load features — things like
-           how many miles I'd run in the last week, the last month, and how many days since
-           my previous run. Ridge handles correlated inputs better than standard linear regression,
-           which matters here because weekly and monthly mileage obviously move together.</p>
+      <div class="panel">
+        <h3>What I built</h3>
+        <p>Ridge regression trained on training-load features — rolling weekly mileage, days since last run, temperature, humidity, and run distance. Ridge handles correlated inputs better than standard linear regression, which matters since weekly and monthly mileage obviously move together.</p>
+        <p>The split is <strong>chronological</strong>: train on older runs, test on the most recent 20%. That's the honest way to do it — a random split would let future data leak into training.</p>
 
-        <p>The train/test split is <strong>chronological</strong> — the model trains on my older
-           runs and gets tested on my most recent ones. That's the honest way to do it; a random
-           split would let future data leak into training.</p>
-
-        <div class="finding">
-          <strong>What happened:</strong> The model got a negative R² on the test set, meaning it
-          predicted pace worse than just guessing the average. Turns out I got about
-          <strong>40 seconds per mile faster</strong> over the last 9 months — a shift the model
-          had no way to see coming from 4 years of prior training data. It's a good reminder that
-          running performance isn't stationary, and a linear model can't adapt to real fitness changes.
+        <div class="callout">
+          <strong>What happened:</strong> The model got a negative R² on the test set — it predicted pace worse than just guessing the average. Turns out I got about <strong>40 seconds per mile faster</strong> over the last 9 months, and the model had no way to see that coming from prior years of training data. A good reminder that running fitness isn't a straight line.
         </div>
 
-        <h3>Features used</h3>
-        <table class="feats">
-          <thead><tr><th>Feature</th><th>Rationale</th></tr></thead>
+        <h3>Features</h3>
+        <table class="ft">
+          <thead><tr><th>Feature</th><th>What it captures</th></tr></thead>
           <tbody>
-            <tr><td class="fc">log_distance</td>       <td>Longer runs → slower pace</td></tr>
-            <tr><td class="fc">rolling_28d_miles</td>  <td>Fitness base (strongest coef.)</td></tr>
-            <tr><td class="fc">rolling_7d_miles</td>   <td>Acute fatigue</td></tr>
-            <tr><td class="fc">days_since_last_run</td><td>Recovery proxy</td></tr>
-            <tr><td class="fc">run_index</td>          <td>Long-term fitness trend</td></tr>
-            <tr><td class="fc">month_num</td>          <td>Seasonal variation</td></tr>
+            <tr><td class="fc">rolling_28d_miles</td><td>Fitness base — strongest signal</td></tr>
+            <tr><td class="fc">rolling_7d_miles</td> <td>Recent fatigue</td></tr>
+            <tr><td class="fc">log_distance</td>      <td>Longer runs → slower pace</td></tr>
+            <tr><td class="fc">temperature_f</td>     <td>Hot = slower</td></tr>
+            <tr><td class="fc">humidity_pct</td>      <td>Humid = slower</td></tr>
+            <tr><td class="fc">days_since_last_run</td><td>Rest / recovery</td></tr>
           </tbody>
         </table>
-
-        <div class="tech-row">
-          <span class="tech-pill">Ridge Regression</span>
-          <span class="tech-pill">StandardScaler</span>
-          <span class="tech-pill">Chronological split</span>
-          <span class="tech-pill">scikit-learn</span>
+        <div class="pills">
+          <span class="pill">Ridge Regression</span>
+          <span class="pill">scikit-learn</span>
+          <span class="pill">Chronological split</span>
+          <span class="pill">Open-Meteo API</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Methodology -->
+  <!-- How it works -->
   <section>
-    <div class="section-header">
+    <div class="sh">
       <h2>How It Works</h2>
-      <p>Four Python scripts that run in sequence — one command takes it from raw Strava export to all the charts above.</p>
+      <p>Five Python scripts that run in sequence — one command from raw Strava export to all the charts above.</p>
     </div>
     <div class="method-grid">
       <div class="method-card">
-        <div class="step">Step 1</div>
-        <h3>Data Cleaning</h3>
-        <p>Load the raw Strava CSV, keep only runs, convert km to miles, and drop anything with a pace that's physically impossible (under 3:00/mile or over 30:00/mile).</p>
+        <div class="step-num">Step 1</div>
+        <h3>Clean</h3>
+        <p>Load the raw CSV, keep only runs, convert km to miles, drop anything with a pace outside 3:00–30:00/mile.</p>
       </div>
       <div class="method-card">
-        <div class="step">Step 2</div>
-        <h3>Feature Engineering</h3>
-        <p>Build rolling mileage windows (7, 28, 56 days) and add weather at the start location of each run. A <code>shift(1)</code> makes sure I never use future data to predict past runs. Label each run Easy / Moderate / Hard based on where its pace falls.</p>
+        <div class="step-num">Step 2</div>
+        <h3>Weather</h3>
+        <p>Parse start GPS from each <code>.gpx</code> / <code>.fit.gz</code> file, cluster into location buckets, fetch hourly temp and humidity from Open-Meteo.</p>
       </div>
       <div class="method-card">
-        <div class="step">Step 3</div>
-        <h3>Pace Modelling</h3>
-        <p>Train a Ridge regression on the first 80% of runs (by date), test on the most recent 20%. Standardise features so I can compare which ones matter most. Results are correlations, not causes.</p>
+        <div class="step-num">Step 3</div>
+        <h3>Features</h3>
+        <p>Build rolling mileage windows (7, 28, 56 days). A <code>shift(1)</code> makes sure no future data leaks in. Label each run Easy / Moderate / Hard.</p>
       </div>
       <div class="method-card">
-        <div class="step">Step 4</div>
-        <h3>Visualisation</h3>
-        <p>Seven charts built with Matplotlib and seaborn. I wanted them to look clean enough to actually put in a portfolio, so I spent time on the colour palette and layout.</p>
+        <div class="step-num">Step 4</div>
+        <h3>Model</h3>
+        <p>Train Ridge regression on the first 80% of runs, test on the most recent 20%. Standardise features so I can compare importance.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-num">Step 5</div>
+        <h3>Visualise</h3>
+        <p>Seven charts with Matplotlib and seaborn. I wanted them to look clean enough to actually put in a portfolio.</p>
       </div>
     </div>
 
-    <div style="margin-top:1.5rem; text-align:center;">
-      <div class="tech-row" style="justify-content:center;">
-        <span class="tech-pill">Python 3.9+</span>
-        <span class="tech-pill">pandas</span>
-        <span class="tech-pill">NumPy</span>
-        <span class="tech-pill">scikit-learn</span>
-        <span class="tech-pill">Matplotlib</span>
-        <span class="tech-pill">seaborn</span>
+    <div style="margin-top:1.5rem;">
+      <div class="pills">
+        <span class="pill">Python 3.9</span>
+        <span class="pill">pandas</span>
+        <span class="pill">NumPy</span>
+        <span class="pill">scikit-learn</span>
+        <span class="pill">Matplotlib</span>
+        <span class="pill">seaborn</span>
+        <span class="pill">fitparse</span>
+        <span class="pill">Open-Meteo API</span>
       </div>
     </div>
   </section>
 
 </main>
 
-<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<!-- Footer ──────────────────────────────────────────────────────────── -->
 <footer>
-  <p>Raw GPS and activity data are excluded from this repo — only the code and charts are committed.</p>
-  <p style="margin-top:.4rem;">
-    Built with Python ·
+  <p>Raw GPS and activity data excluded from this repo — only the code and charts are committed.</p>
+  <p>
     <a href="docs/project_summary.md" target="_blank">Methodology</a> ·
-    <a href="https://github.com/kateeconnolly/running-performance-analytics"
-       target="_blank" rel="noopener">Source on GitHub</a>
+    <a href="https://github.com/kateeconnolly/running-performance-analytics" target="_blank" rel="noopener">GitHub</a>
   </p>
 </footer>
 
