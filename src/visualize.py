@@ -197,8 +197,10 @@ def plot_pace_over_time(runs: pd.DataFrame) -> None:
         ax.plot(smooth.index, smooth, color=DARK, linewidth=2.2,
                 label="30-day avg", zorder=4)
 
-    # Flip y-axis: lower number = faster = visually "higher"
+    p_lo = runs["pace_min_per_mile"].quantile(0.01)
+    p_hi = runs["pace_min_per_mile"].quantile(0.99)
     ax.invert_yaxis()
+    ax.set_ylim(p_hi + 0.3, p_lo - 0.3)
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(_pace_fmt))
     ax.set_title("Pace Over Time  (dot size ∝ distance · colour = effort level)")
     ax.set_ylabel("Pace (min/mile)   ← faster")
@@ -213,22 +215,29 @@ def plot_pace_vs_temp(runs: pd.DataFrame) -> None:
     """Scatter of pace vs temperature, coloured by effort, with a trend line."""
     geo = runs[runs["temperature_f"].notna()].copy()
 
+    # Clip y-axis to the 1st–99th percentile so outliers don't squash the view
+    p_lo = geo["pace_min_per_mile"].quantile(0.01)
+    p_hi = geo["pace_min_per_mile"].quantile(0.99)
+
     fig, ax = plt.subplots(figsize=(11, 5))
 
     for effort in EFFORT_ORDER:
         sub = geo[geo["effort"] == effort]
         ax.scatter(sub["temperature_f"], sub["pace_min_per_mile"],
-                   color=EFFORT_COLORS[effort], alpha=0.45, s=30,
+                   color=EFFORT_COLORS[effort], alpha=0.5, s=35,
                    edgecolors="white", linewidths=0.3,
                    label=f"{effort} ({len(sub)} runs)", zorder=3)
 
-    # Linear trend across all runs
-    z = np.polyfit(geo["temperature_f"], geo["pace_min_per_mile"], 1)
+    # Trend line fitted on the clipped data only so one extreme run
+    # doesn't pull the slope
+    clipped = geo[geo["pace_min_per_mile"].between(p_lo, p_hi)]
+    z = np.polyfit(clipped["temperature_f"], clipped["pace_min_per_mile"], 1)
     x_line = np.linspace(geo["temperature_f"].min(), geo["temperature_f"].max(), 200)
     ax.plot(x_line, np.poly1d(z)(x_line),
             color=DARK, linewidth=2, linestyle="--", label="Trend", zorder=4)
 
     ax.invert_yaxis()
+    ax.set_ylim(p_hi + 0.3, p_lo - 0.3)   # inverted axis: slower at bottom
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(_pace_fmt))
     ax.set_title("Pace vs. Temperature  (weather from Open-Meteo)")
     ax.set_xlabel("Temperature (°F)")
