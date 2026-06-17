@@ -191,19 +191,20 @@ def plot_pace_over_time(runs: pd.DataFrame) -> None:
             label=f"{effort} ({len(subset)} runs)", zorder=3,
         )
 
-    # 30-day rolling average — resample to daily first to handle gaps
-    pace_series = runs.set_index("date")["pace_min_per_mile"].resample("D").mean()
+    p_lo = runs["pace_min_per_mile"].quantile(0.01)
+    p_hi = runs["pace_min_per_mile"].quantile(0.99)
+
+    # 30-day rolling average — exclude outliers so bad data can't spike the trend
+    clipped = runs[runs["pace_min_per_mile"].between(p_lo, p_hi)]
+    pace_series = clipped.set_index("date")["pace_min_per_mile"].resample("D").mean()
     smooth = pace_series.rolling(30, min_periods=3).mean().dropna()
     if len(smooth) > 2:
         ax.plot(smooth.index, smooth, color=DARK, linewidth=2.2,
                 label="30-day avg", zorder=4)
-
-    p_lo = runs["pace_min_per_mile"].quantile(0.01)
-    p_hi = runs["pace_min_per_mile"].quantile(0.99)
     ax.invert_yaxis()
     ax.set_ylim(p_hi + 0.3, p_lo - 0.3)
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(_pace_fmt))
-    ax.set_title("Pace Over Time  (dot size ∝ distance · color = effort level)")
+    ax.set_title("Pace Over Time  (dot size ∝ distance · color = effort level · lower = faster)")
     ax.set_ylabel("Pace (min/mile)   ← faster")
     _date_axis(ax)
     ax.legend(markerscale=1.2)
