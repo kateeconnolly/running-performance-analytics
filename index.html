@@ -267,11 +267,12 @@
 
 <!-- ── Hero ───────────────────────────────────────────────────────────── -->
 <header class="hero">
-  <div class="hero-badge">Data Science Portfolio</div>
+  <div class="hero-badge">Data Science Project</div>
   <h1>Running <em>Performance</em><br>Analytics</h1>
   <p class="hero-sub">
-    An end-to-end Python pipeline that transforms a personal Strava export into
-    training-load metrics, effort classification, and exploratory pace modelling.
+    I run a lot and I keep everything on Strava. This project digs into that data —
+    training trends, weather effects on pace, and a model that tries (and interestingly fails)
+    to predict how fast I'll run.
   </p>
 
   <div class="stats-strip">
@@ -299,7 +300,7 @@
   <section>
     <div class="section-header">
       <h2>Training Volume</h2>
-      <p>Weekly mileage over 4.8 years, with 4-week and 8-week rolling load curves to surface periodisation patterns and training cycles.</p>
+      <p>Almost 5 years of weekly mileage. The rolling averages smooth out the noise and make it easier to see when I was actually building fitness vs. just getting runs in.</p>
     </div>
     <div class="g2">
       <div class="card">
@@ -324,8 +325,8 @@
   <!-- Long Run & Pace Distribution -->
   <section>
     <div class="section-header">
-      <h2>Long Run Progression &amp; Pace Distribution</h2>
-      <p>How long-run distance has trended over time, and how pace distributes across effort zones — classified by pace tertiles into Easy, Moderate, and Hard.</p>
+      <h2>Long Runs &amp; Pace Distribution</h2>
+      <p>How my long runs have changed over time, and where my pace naturally clusters. I split runs into easy, moderate, and hard based on where they fall in my own pace distribution — no heart rate monitor needed.</p>
     </div>
     <div class="g2">
       <div class="card">
@@ -351,7 +352,7 @@
   <section>
     <div class="section-header">
       <h2>Pace Over Time</h2>
-      <p>Every run plotted by date and pace. Dot size scales with run distance. The 30-day rolling average reveals long-term pace trends beneath the day-to-day variation.</p>
+      <p>Every run, plotted. Bigger dots are longer runs. The trend line is the clearest thing in the whole dataset — my pace has been getting faster.</p>
     </div>
     <div class="card">
       <img src="figures/pace_over_time.png"
@@ -366,8 +367,8 @@
   <!-- Pace Prediction Model -->
   <section>
     <div class="section-header">
-      <h2>Exploratory Pace Prediction Model</h2>
-      <p>A Ridge regression trained on training-load features, evaluated on a held-out future test set to simulate forward deployment.</p>
+      <h2>Can I Predict My Pace?</h2>
+      <p>I built a model to see if recent training data could predict how fast I'd run. The honest answer: not really. But why it fails is more interesting than if it had worked.</p>
     </div>
     <div class="model-grid">
       <div class="card">
@@ -380,23 +381,22 @@
       </div>
 
       <div class="explainer">
-        <h3>Model Design</h3>
-        <p>Ridge regression predicts pace (min/mile) from six training-load features.
-           Ridge was chosen over OLS because the rolling mileage windows are correlated —
-           the L2 penalty stabilises coefficient estimates under multicollinearity.</p>
+        <h3>How it works</h3>
+        <p>I used Ridge regression to predict pace from training-load features — things like
+           how many miles I'd run in the last week, the last month, and how many days since
+           my previous run. Ridge handles correlated inputs better than standard linear regression,
+           which matters here because weekly and monthly mileage obviously move together.</p>
 
-        <p>The train/test split is <strong>chronological</strong>, not random: the first 80% of
-           runs (by date) form the training set, and the final 20% the test set. This ensures
-           the model is always evaluated on runs it has never seen and that post-date all
-           training data.</p>
+        <p>The train/test split is <strong>chronological</strong> — the model trains on my older
+           runs and gets tested on my most recent ones. That's the honest way to do it; a random
+           split would let future data leak into training.</p>
 
         <div class="finding">
-          <strong>Key finding:</strong> The model returns negative R² on the held-out test set,
-          meaning it does not outperform a naive mean predictor on the most recent 9 months of data.
-          Diagnostics reveal a <strong>−0:40/mile shift</strong> in mean pace between training
-          (8:47/mi) and test (8:07/mi) periods. You got measurably faster — in a way a linear
-          trend trained on 4 prior years could not anticipate. This illustrates a known limitation
-          of linear regression on non-stationary physiological time series.
+          <strong>What happened:</strong> The model got a negative R² on the test set, meaning it
+          predicted pace worse than just guessing the average. Turns out I got about
+          <strong>40 seconds per mile faster</strong> over the last 9 months — a shift the model
+          had no way to see coming from 4 years of prior training data. It's a good reminder that
+          running performance isn't stationary, and a linear model can't adapt to real fitness changes.
         </div>
 
         <h3>Features used</h3>
@@ -425,34 +425,29 @@
   <!-- Methodology -->
   <section>
     <div class="section-header">
-      <h2>Pipeline &amp; Methodology</h2>
-      <p>Four stages from raw Strava export to publication-quality figures, runnable end-to-end with a single command.</p>
+      <h2>How It Works</h2>
+      <p>Four Python scripts that run in sequence — one command takes it from raw Strava export to all the charts above.</p>
     </div>
     <div class="method-grid">
       <div class="method-card">
         <div class="step">Step 1</div>
         <h3>Data Cleaning</h3>
-        <p>Filters to running activities, converts Strava's km export to miles, parses timestamps, and removes rows outside physically plausible pace bounds (3–30 min/mile).</p>
+        <p>Load the raw Strava CSV, keep only runs, convert km to miles, and drop anything with a pace that's physically impossible (under 3:00/mile or over 30:00/mile).</p>
       </div>
       <div class="method-card">
         <div class="step">Step 2</div>
         <h3>Feature Engineering</h3>
-        <p>Builds rolling 7, 28, and 56-day mileage windows from a daily aggregation.
-           A <code>shift(1)</code> ensures only prior days are included — no data leakage.
-           Classifies each run Easy / Moderate / Hard by pace tertile.</p>
+        <p>Build rolling mileage windows (7, 28, 56 days) and add weather at the start location of each run. A <code>shift(1)</code> makes sure I never use future data to predict past runs. Label each run Easy / Moderate / Hard based on where its pace falls.</p>
       </div>
       <div class="method-card">
         <div class="step">Step 3</div>
         <h3>Pace Modelling</h3>
-        <p>Ridge regression trained on six features using an 80/20 chronological split.
-           Features are standardised for comparable coefficients. Outputs are
-           associative, not causal.</p>
+        <p>Train a Ridge regression on the first 80% of runs (by date), test on the most recent 20%. Standardise features so I can compare which ones matter most. Results are correlations, not causes.</p>
       </div>
       <div class="method-card">
         <div class="step">Step 4</div>
         <h3>Visualisation</h3>
-        <p>Six publication-quality figures with Matplotlib and seaborn. Consistent
-           colour palette and typography across all charts, exported at 150 dpi.</p>
+        <p>Seven charts built with Matplotlib and seaborn. I wanted them to look clean enough to actually put in a portfolio, so I spent time on the colour palette and layout.</p>
       </div>
     </div>
 
@@ -472,7 +467,7 @@
 
 <!-- ── Footer ─────────────────────────────────────────────────────────── -->
 <footer>
-  <p>Raw GPS data and personal activity records are excluded from this repository for privacy.</p>
+  <p>Raw GPS and activity data are excluded from this repo — only the code and charts are committed.</p>
   <p style="margin-top:.4rem;">
     Built with Python ·
     <a href="docs/project_summary.md" target="_blank">Methodology</a> ·
