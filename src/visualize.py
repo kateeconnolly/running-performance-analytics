@@ -209,6 +209,35 @@ def plot_pace_over_time(runs: pd.DataFrame) -> None:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+def plot_pace_vs_temp(runs: pd.DataFrame) -> None:
+    """Scatter of pace vs temperature, coloured by effort, with a trend line."""
+    geo = runs[runs["temperature_f"].notna()].copy()
+
+    fig, ax = plt.subplots(figsize=(11, 5))
+
+    for effort in EFFORT_ORDER:
+        sub = geo[geo["effort"] == effort]
+        ax.scatter(sub["temperature_f"], sub["pace_min_per_mile"],
+                   color=EFFORT_COLORS[effort], alpha=0.45, s=30,
+                   edgecolors="white", linewidths=0.3,
+                   label=f"{effort} ({len(sub)} runs)", zorder=3)
+
+    # Linear trend across all runs
+    z = np.polyfit(geo["temperature_f"], geo["pace_min_per_mile"], 1)
+    x_line = np.linspace(geo["temperature_f"].min(), geo["temperature_f"].max(), 200)
+    ax.plot(x_line, np.poly1d(z)(x_line),
+            color=DARK, linewidth=2, linestyle="--", label="Trend", zorder=4)
+
+    ax.invert_yaxis()
+    ax.yaxis.set_major_formatter(mticker.FuncFormatter(_pace_fmt))
+    ax.set_title("Pace vs. Temperature  (weather from Open-Meteo)")
+    ax.set_xlabel("Temperature (°F)")
+    ax.set_ylabel("Pace (min/mile)   ← faster")
+    ax.legend(markerscale=1.4)
+    plt.tight_layout()
+    _save(fig, "pace_vs_temperature.png")
+
+
 def plot_pace_prediction(preds: pd.DataFrame) -> None:
     """Actual vs. predicted pace scatter with a perfect-prediction diagonal."""
     fig, ax = plt.subplots(figsize=(7, 7))
@@ -265,6 +294,12 @@ def main() -> None:
         plot_pace_prediction(preds)
     else:
         print("      Skipping pace_prediction.png (no predictions file — model skipped)")
+
+    # Weather plot — only if temperature data was fetched
+    if "temperature_f" in runs.columns and runs["temperature_f"].notna().any():
+        plot_pace_vs_temp(runs)
+    else:
+        print("      Skipping pace_vs_temperature.png (run fetch_weather.py first)")
 
     print(f"\n  All figures saved to {FIG_DIR}/")
 

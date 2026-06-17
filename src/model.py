@@ -34,8 +34,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 FEAT   = Path("data/clean/runs_features.csv")
 PREDS  = Path("data/clean/predictions.csv")
 
-# Features the model uses — order matters for the coefficient printout
-FEATURE_COLS = [
+# Core features always used
+_BASE_FEATURES = [
     "log_distance",         # run length: longer runs → typically slower pace
     "rolling_7d_miles",     # acute load: recent fatigue
     "rolling_28d_miles",    # chronic load: current fitness base
@@ -43,18 +43,24 @@ FEATURE_COLS = [
     "run_index",            # long-term fitness trend
     "month_num",            # seasonal variation
 ]
+# Weather features included when available
+_WEATHER_FEATURES = ["temperature_f", "humidity_pct"]
+
 TARGET     = "pace_min_per_mile"
 MIN_RUNS   = 20
 TRAIN_FRAC = 0.80
 
 
 def main() -> None:
-    df = (
-        pd.read_csv(FEAT, parse_dates=["date"])
-        .sort_values("date")
-        .dropna(subset=FEATURE_COLS + [TARGET])
-        .reset_index(drop=True)
-    )
+    df = pd.read_csv(FEAT, parse_dates=["date"]).sort_values("date").reset_index(drop=True)
+
+    # Add weather features to the model if they were fetched
+    weather_cols = [c for c in _WEATHER_FEATURES if c in df.columns and df[c].notna().any()]
+    FEATURE_COLS = _BASE_FEATURES + weather_cols
+    if weather_cols:
+        print(f"      Weather features available: {weather_cols}")
+
+    df = df.dropna(subset=FEATURE_COLS + [TARGET])
     n = len(df)
 
     if n < MIN_RUNS:

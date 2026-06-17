@@ -23,10 +23,11 @@ from pathlib import Path
 # Make src/ importable without installing the package
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from clean_strava import main as step_clean
-from features     import main as step_features
-from model        import main as step_model
-from visualize    import main as step_visualize
+from clean_strava  import main as step_clean
+from fetch_weather import main as step_weather
+from features      import main as step_features
+from model         import main as step_model
+from visualize     import main as step_visualize
 
 DIVIDER = "─" * 54
 
@@ -38,6 +39,7 @@ def run() -> None:
 
     steps = [
         ("Clean data",         step_clean),
+        ("Fetch weather",      step_weather),
         ("Engineer features",  step_features),
         ("Train model",        step_model),
         ("Generate figures",   step_visualize),

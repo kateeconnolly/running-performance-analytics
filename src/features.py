@@ -24,9 +24,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-CLEAN  = Path("data/clean/runs_clean.csv")
-FEAT   = Path("data/clean/runs_features.csv")
-WEEKLY = Path("data/clean/weekly_summary.csv")
+CLEAN   = Path("data/clean/runs_clean.csv")
+FEAT    = Path("data/clean/runs_features.csv")
+WEEKLY  = Path("data/clean/weekly_summary.csv")
+WEATHER = Path("data/clean/weather.csv")
 
 
 def _add_rolling_load(runs: pd.DataFrame) -> pd.DataFrame:
@@ -108,6 +109,14 @@ def main() -> None:
     effort_counts = runs["effort"].value_counts().to_dict()
     print(f"      Pace thresholds: Hard < {q33:.2f}, Moderate < {q67:.2f} min/mile")
     print(f"      Effort split   : {effort_counts}")
+
+    # ── Merge weather features if available ───────────────────────────────────
+    if WEATHER.exists():
+        weather = pd.read_csv(WEATHER, parse_dates=["date"])
+        runs = runs.merge(weather, on="date", how="left")
+        n_w = runs["temperature_f"].notna().sum()
+        print(f"      Merged weather for {n_w:,} runs  "
+              f"(temp: {runs['temperature_f'].min():.0f}–{runs['temperature_f'].max():.0f}°F)")
 
     FEAT.parent.mkdir(parents=True, exist_ok=True)
     runs.to_csv(FEAT, index=False)
