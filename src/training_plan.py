@@ -84,12 +84,20 @@ WEEK_DAY_TYPES = [
 
 # ── Formatters ────────────────────────────────────────────────────────────────
 
-def pace_str(mpm: float) -> str:
+def _fmt(mpm: float) -> str:
     t = int(round(mpm * 60))
     return f"{t // 60}:{t % 60:02d}"
 
 
-def finish_str(mpm: float, dist: float = 13.1) -> str:
+def pace_str(val) -> str:
+    """Accept a float or (lo, hi) tuple and return a formatted pace string."""
+    if isinstance(val, (tuple, list)):
+        return f"{_fmt(val[0])}–{_fmt(val[1])}"
+    return _fmt(val)
+
+
+def finish_str(val, dist: float = 13.1) -> str:
+    mpm = (val[0] + val[1]) / 2 if isinstance(val, (tuple, list)) else val
     t = int(round(mpm * dist * 60))
     h, r = divmod(t, 3600)
     m, s = divmod(r, 60)
@@ -104,20 +112,36 @@ def get_halfs(runs: pd.DataFrame) -> pd.DataFrame:
 
 
 def derive_paces() -> dict:
-    race = GOAL_PACE
+    r = GOAL_PACE
     return {
-        "race":      race,
-        "tempo":     race - 0.20,   # ~6:40/mi — threshold, faster than HM
-        "long_run":  race + 1.05,   # ~7:55/mi — easy long run
-        "easy":      race + 1.20,   # ~8:04/mi — daily easy
-        "recovery":  race + 1.65,   # ~8:31/mi — after hard days / 7-day weeks
+        # Ranges displayed to the user (lo, hi tuples)
+        "race":       (r - 0.05, r + 0.05),    # 6:49–6:54
+        "tempo":      (r - 0.30, r - 0.10),    # 6:34–6:44 — threshold, faster than HM
+        "long_run":   (r + 0.85, r + 1.25),    # 7:43–8:07 — easy long run
+        "easy":       (r + 1.00, r + 1.40),    # 7:54–8:16 — daily easy
+        "recovery":   (r + 1.45, r + 1.90),    # 8:18–8:43 — after hard days / 7-day weeks
+        # Derived ranges used in workout descriptions
+        "rp_slight":  (r + 0.05, r + 0.20),    # 6:55–7:04 — slightly slower than race
+        "rp_pickup":  (r + 0.18, r + 0.30),    # 7:03–7:09 — end-of-long-run pickup
+        "lr_fast":    (r + 0.60, r + 0.80),    # 7:28–7:41 — faster long-run sections
+        "tempo_tight":(r - 0.28, r - 0.13),    # 6:37–6:46 — taper 800m reps
+        # Centers for arithmetic inside day_detail
+        "_r": r, "_t": r - 0.18, "_lr": r + 1.05, "_e": r + 1.20, "_rv": r + 1.65,
     }
 
 
 # ── Day detail strings ────────────────────────────────────────────────────────
 
 def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
-    rp, tp, lr, ep, rv = p["race"], p["tempo"], p["long_run"], p["easy"], p["recovery"]
+    rp    = p["race"]
+    tp    = p["tempo"]
+    lr    = p["long_run"]
+    ep    = p["easy"]
+    rv    = p["recovery"]
+    rps   = p["rp_slight"]     # 6:55–7:04
+    rpp   = p["rp_pickup"]     # 7:03–7:09
+    lrf   = p["lr_fast"]       # 7:28–7:41
+    tpt   = p["tempo_tight"]   # 6:37–6:46 (taper reps)
     mi = int(miles) if miles == int(miles) else miles
 
     if dtype == "Rest":
@@ -131,7 +155,7 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
         pace = rv if day_idx in (4, 5) else ep
         return f"{mi}mi @ {pace_str(pace)}/mi"
 
-    # ── Workouts (Tue, and Thu in taper) ──────────────────────────────────────
+    # ── Workouts ──────────────────────────────────────────────────────────────
     if dtype == "Workout":
         if wk == 1:
             return f"2mi WU + 4mi @ {pace_str(tp)}/mi + 3mi CD"
@@ -150,15 +174,15 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
         if wk == 8:
             return f"2mi WU + 4×1mi @ {pace_str(tp)}/mi (90s jog) + 2mi CD"
         if wk == 9:
-            return f"2mi WU + 2×3mi @ {pace_str(rp - 0.05)}/mi (2min jog) + 1mi CD"
+            return f"2mi WU + 2×3mi @ {pace_str(rp)}/mi (2min jog) + 1mi CD"
         if wk == 10:
-            return f"2mi WU + 2×3mi @ {pace_str(rp - 0.05)}/mi (2min jog) + 2mi CD"
+            return f"2mi WU + 2×3mi @ {pace_str(rp)}/mi (2min jog) + 2mi CD"
         if wk == 11:
             return f"2mi WU + 8mi @ {pace_str(rp)}/mi + 2mi CD — race sim"
         if wk == 12:
             return f"2mi WU + 4×1mi @ {pace_str(tp)}/mi (90s jog) + 3mi CD"
         if wk == 13 and day_idx == 1:
-            return f"2mi WU + 6×800m @ {pace_str(tp - 0.05)}/mi (90s jog) + 2mi CD"
+            return f"2mi WU + 6×800m @ {pace_str(tpt)}/mi (90s jog) + 2mi CD"
         if wk == 13 and day_idx == 3:
             return f"1mi WU + 4mi @ {pace_str(rp)}/mi + 3mi CD — stay sharp"
 
@@ -169,21 +193,21 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
         if wk == 4:
             return f"{mi}mi easy @ {pace_str(ep)}/mi + 4 strides"
         if wk == 5:
-            return f"{mi}mi: easy + 2mi @ {pace_str(rp + 0.10)}/mi in the middle"
+            return f"{mi}mi: easy + 2mi @ {pace_str(rps)}/mi in the middle"
         if wk == 6:
-            return f"{mi}mi: easy + 3mi @ {pace_str(rp + 0.10)}/mi in the middle"
+            return f"{mi}mi: easy + 3mi @ {pace_str(rps)}/mi in the middle"
         if wk == 7:
-            return f"{mi}mi: easy + 4mi @ {pace_str(rp + 0.10)}/mi in the middle"
+            return f"{mi}mi: easy + 4mi @ {pace_str(rps)}/mi in the middle"
         if wk == 8:
             return f"{mi}mi easy @ {pace_str(ep)}/mi + 4 strides"
         if wk == 9:
-            return f"{mi}mi: 4mi easy + 4mi @ {pace_str(rp + 0.10)}/mi + 3mi easy"
+            return f"{mi}mi: 4mi easy + 4mi @ {pace_str(rps)}/mi + 3mi easy"
         if wk == 10:
             return f"{mi}mi: 3mi easy + 5mi @ {pace_str(rp)}/mi + 4mi easy"
         if wk == 11:
             return f"{mi}mi: 2mi easy + 6mi @ {pace_str(rp)}/mi + 4mi easy"
         if wk == 12:
-            return f"{mi}mi: easy + 3mi @ {pace_str(rp + 0.15)}/mi in the middle"
+            return f"{mi}mi: easy + 3mi @ {pace_str(rps)}/mi in the middle"
         if wk == 13:
             return f"{mi}mi easy @ {pace_str(lr)}/mi — no extra effort"
 
@@ -192,19 +216,19 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
         if wk <= 4:
             return f"{mi}mi long @ {pace_str(lr)}/mi — conversation pace"
         if wk == 5:
-            return f"{mi}mi: {mi - 2}mi @ {pace_str(lr)}/mi + last 2mi @ {pace_str(rp + 0.20)}/mi"
+            return f"{mi}mi: {mi - 2}mi @ {pace_str(lr)}/mi + last 2mi @ {pace_str(rpp)}/mi"
         if wk == 6:
-            return f"{mi}mi: {mi - 3}mi @ {pace_str(lr)}/mi + last 3mi @ {pace_str(rp + 0.20)}/mi"
+            return f"{mi}mi: {mi - 3}mi @ {pace_str(lr)}/mi + last 3mi @ {pace_str(rpp)}/mi"
         if wk == 7:
-            return f"{mi}mi: {mi - 4}mi @ {pace_str(lr)}/mi + last 4mi @ {pace_str(rp + 0.20)}/mi"
+            return f"{mi}mi: {mi - 4}mi @ {pace_str(lr)}/mi + last 4mi @ {pace_str(rpp)}/mi"
         if wk == 8:
             return f"{mi}mi long @ {pace_str(lr)}/mi — comfortable"
         if wk == 9:
-            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(lr - 0.15)}/mi → 4mi easy"
+            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(lrf)}/mi → 4mi easy"
         if wk == 10:
-            return f"{mi}mi progression: 4mi easy → 6mi @ {pace_str(lr - 0.20)}/mi → 4mi @ {pace_str(rp + 0.20)}/mi"
+            return f"{mi}mi progression: 4mi easy → 6mi @ {pace_str(lrf)}/mi → 4mi @ {pace_str(rpp)}/mi"
         if wk == 11:
-            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(rp + 0.20)}/mi → 4mi @ {pace_str(rp + 0.10)}/mi"
+            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(rpp)}/mi → 4mi @ {pace_str(rp)}/mi"
         if wk == 12:
             return f"{mi}mi long @ {pace_str(lr)}/mi — reset after peak"
         if wk == 13:
