@@ -10,6 +10,7 @@ Outputs:
 """
 from pathlib import Path
 from datetime import date, timedelta
+import re
 import pandas as pd
 
 FEAT_CSV  = Path("data/clean/runs_features.csv")
@@ -33,15 +34,24 @@ PHASE_COLORS = {
     "Race Week": "#E85D04",
 }
 
-# (css-class, background, foreground)
-DAY_TYPE_STYLE = {
-    "Easy":        ("#F0FAF1", "#2E7D32"),
-    "Workout":     ("#FFF4EE", "#E85D04"),
-    "Medium-Long": ("#E8F4FD", "#1565C0"),
-    "Long":        ("#F3E5F5", "#7B1FA2"),
-    "Rest":        ("#F5F5F5", "#BDBDBD"),
-    "Shakeout":    ("#FFFDE7", "#B45309"),
-    "Race":        ("#E85D04", "#FFFFFF"),
+DISPLAY_LABEL = {
+    "Easy":        "Easy Run",
+    "Workout":     "Intervals",
+    "Medium-Long": "Tempo",
+    "Long":        "Long Run",
+    "Rest":        "Rest",
+    "Shakeout":    "Shakeout",
+    "Race":        "Race Day",
+}
+
+DOT_COLOR = {
+    "Easy":        "#5BAD46",   # green
+    "Workout":     "#E85D04",   # red-orange
+    "Medium-Long": "#F59E0B",   # amber
+    "Long":        "#7C3AED",   # purple
+    "Rest":        "#D1D5DB",   # gray
+    "Shakeout":    "#F59E0B",   # amber
+    "Race":        "#E85D04",   # orange
 }
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -158,81 +168,112 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
     # ── Workouts ──────────────────────────────────────────────────────────────
     if dtype == "Workout":
         if wk == 1:
-            return f"2mi WU + 4mi @ {pace_str(tp)}/mi + 3mi CD"
+            return (f"<strong>Fartlek</strong> — 2mi WU, "
+                    f"6×3min @ {pace_str(tp)}/mi w/ 2min easy jog, 2mi CD")
         if wk == 2:
-            return f"2mi WU + 5mi @ {pace_str(tp)}/mi + 3mi CD"
+            return (f"<strong>Cruise Intervals</strong> — 2mi WU, "
+                    f"3×10min @ {pace_str(tp)}/mi (90s jog), 1mi CD")
         if wk == 3:
-            return f"3mi WU + 5mi @ {pace_str(tp)}/mi + 3mi CD"
+            return (f"<strong>Tempo Run</strong> — 2mi WU, "
+                    f"20min continuous @ {pace_str(tp)}/mi, 2mi CD")
         if wk == 4:
-            return f"2mi WU + 3mi @ {pace_str(tp)}/mi + 4mi CD"
+            return (f"<strong>Easy Fartlek</strong> — 2mi WU, "
+                    f"4×3min @ {pace_str(tp)}/mi w/ 3min easy jog, 2mi CD")
         if wk == 5:
-            return f"2mi WU + 4×1mi @ {pace_str(tp)}/mi (90s jog) + 3mi CD"
+            return (f"<strong>Mile Repeats</strong> — 2mi WU, "
+                    f"4×1mi @ {pace_str(tp)}/mi (90s jog), 3mi CD")
         if wk == 6:
-            return f"2mi WU + 5×1mi @ {pace_str(tp)}/mi (90s jog) + 3mi CD"
+            return (f"<strong>Mile Repeats</strong> — 2mi WU, "
+                    f"5×1mi @ {pace_str(tp)}/mi (90s jog), 3mi CD")
         if wk == 7:
-            return f"2mi WU + 5×1mi @ {pace_str(tp)}/mi (90s jog) + 4mi CD"
+            return (f"<strong>Tempo Run</strong> — 2mi WU, "
+                    f"25min continuous @ {pace_str(tp)}/mi, 3mi CD")
         if wk == 8:
-            return f"2mi WU + 4×1mi @ {pace_str(tp)}/mi (90s jog) + 2mi CD"
+            return (f"<strong>Cruise Intervals</strong> — 2mi WU, "
+                    f"3×1mi @ {pace_str(tp)}/mi (90s jog), 4mi CD")
         if wk == 9:
-            return f"2mi WU + 2×3mi @ {pace_str(rp)}/mi (2min jog) + 1mi CD"
+            return (f"<strong>Race Pace Intervals</strong> — 2mi WU, "
+                    f"2×3mi @ {pace_str(rp)}/mi (2min jog), 1mi CD")
         if wk == 10:
-            return f"2mi WU + 2×3mi @ {pace_str(rp)}/mi (2min jog) + 2mi CD"
+            return (f"<strong>Race Pace Intervals</strong> — 2mi WU, "
+                    f"2×3mi @ {pace_str(rp)}/mi (2min jog), 2mi CD")
         if wk == 11:
-            return f"2mi WU + 8mi @ {pace_str(rp)}/mi + 2mi CD — race sim"
+            return (f"<strong>Race Simulation</strong> — 2mi WU, "
+                    f"8mi @ {pace_str(rp)}/mi, 2mi CD")
         if wk == 12:
-            return f"2mi WU + 4×1mi @ {pace_str(tp)}/mi (90s jog) + 3mi CD"
+            return (f"<strong>Mile Repeats</strong> — 2mi WU, "
+                    f"4×1mi @ {pace_str(tp)}/mi (90s jog), 3mi CD")
         if wk == 13 and day_idx == 1:
-            return f"2mi WU + 6×800m @ {pace_str(tpt)}/mi (90s jog) + 2mi CD"
+            return (f"<strong>800m Repeats</strong> — 2mi WU, "
+                    f"6×800m @ {pace_str(tpt)}/mi (90s jog), 2mi CD")
         if wk == 13 and day_idx == 3:
-            return f"1mi WU + 4mi @ {pace_str(rp)}/mi + 3mi CD — stay sharp"
+            return (f"<strong>Race Preview</strong> — 1mi WU, "
+                    f"4mi @ {pace_str(rp)}/mi, 3mi CD")
 
     # ── Medium-Long ───────────────────────────────────────────────────────────
     if dtype == "Medium-Long":
         if wk <= 3:
-            return f"{mi}mi easy @ {pace_str(ep)}/mi + 6 strides"
+            return f"{mi}mi easy @ {pace_str(ep)}/mi + 6×20sec strides"
         if wk == 4:
-            return f"{mi}mi easy @ {pace_str(ep)}/mi + 4 strides"
+            return f"{mi}mi easy @ {pace_str(ep)}/mi + 4×20sec strides"
         if wk == 5:
-            return f"{mi}mi: easy + 2mi @ {pace_str(rps)}/mi in the middle"
+            return (f"<strong>Progression</strong> — {mi - 4}mi easy, "
+                    f"2mi @ {pace_str(rps)}/mi, {2}mi easy")
         if wk == 6:
-            return f"{mi}mi: easy + 3mi @ {pace_str(rps)}/mi in the middle"
+            return (f"<strong>Progression</strong> — {mi - 5}mi easy, "
+                    f"3mi @ {pace_str(rps)}/mi, 2mi easy")
         if wk == 7:
-            return f"{mi}mi: easy + 4mi @ {pace_str(rps)}/mi in the middle"
+            return (f"<strong>Progression</strong> — {mi - 6}mi easy, "
+                    f"4mi @ {pace_str(rps)}/mi, 2mi easy")
         if wk == 8:
-            return f"{mi}mi easy @ {pace_str(ep)}/mi + 4 strides"
+            return f"{mi}mi easy @ {pace_str(ep)}/mi + 4×20sec strides"
         if wk == 9:
-            return f"{mi}mi: 4mi easy + 4mi @ {pace_str(rps)}/mi + 3mi easy"
+            return (f"<strong>Race Effort Blocks</strong> — 4mi easy, "
+                    f"4mi @ {pace_str(rps)}/mi, 3mi easy")
         if wk == 10:
-            return f"{mi}mi: 3mi easy + 5mi @ {pace_str(rp)}/mi + 4mi easy"
+            return (f"<strong>Race Effort Blocks</strong> — 3mi easy, "
+                    f"5mi @ {pace_str(rp)}/mi, 4mi easy")
         if wk == 11:
-            return f"{mi}mi: 2mi easy + 6mi @ {pace_str(rp)}/mi + 4mi easy"
+            return (f"<strong>Race Effort Blocks</strong> — 2mi easy, "
+                    f"6mi @ {pace_str(rp)}/mi, 4mi easy")
         if wk == 12:
-            return f"{mi}mi: easy + 3mi @ {pace_str(rps)}/mi in the middle"
+            return (f"<strong>Progression</strong> — {mi - 4}mi easy, "
+                    f"3mi @ {pace_str(rps)}/mi, 1mi easy")
         if wk == 13:
-            return f"{mi}mi easy @ {pace_str(lr)}/mi — no extra effort"
+            return f"{mi}mi easy @ {pace_str(lr)}/mi — no race effort"
 
     # ── Long run ──────────────────────────────────────────────────────────────
     if dtype == "Long":
         if wk <= 4:
-            return f"{mi}mi long @ {pace_str(lr)}/mi — conversation pace"
+            return (f"<strong>Easy Long Run</strong> — "
+                    f"{mi}mi @ {pace_str(lr)}/mi, all conversation pace")
         if wk == 5:
-            return f"{mi}mi: {mi - 2}mi @ {pace_str(lr)}/mi + last 2mi @ {pace_str(rpp)}/mi"
+            return (f"<strong>Progression Long Run</strong> — "
+                    f"{mi - 2}mi @ {pace_str(lr)}/mi, last 2mi @ {pace_str(rpp)}/mi")
         if wk == 6:
-            return f"{mi}mi: {mi - 3}mi @ {pace_str(lr)}/mi + last 3mi @ {pace_str(rpp)}/mi"
+            return (f"<strong>Progression Long Run</strong> — "
+                    f"{mi - 3}mi @ {pace_str(lr)}/mi, last 3mi @ {pace_str(rpp)}/mi")
         if wk == 7:
-            return f"{mi}mi: {mi - 4}mi @ {pace_str(lr)}/mi + last 4mi @ {pace_str(rpp)}/mi"
+            return (f"<strong>Progression Long Run</strong> — "
+                    f"{mi - 4}mi @ {pace_str(lr)}/mi, last 4mi @ {pace_str(rpp)}/mi")
         if wk == 8:
-            return f"{mi}mi long @ {pace_str(lr)}/mi — comfortable"
+            return (f"<strong>Easy Long Run</strong> — "
+                    f"{mi}mi @ {pace_str(lr)}/mi, controlled and comfortable")
         if wk == 9:
-            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(lrf)}/mi → 4mi easy"
+            return (f"<strong>Long Run w/ Fast Finish</strong> — "
+                    f"4mi easy, 6mi @ {pace_str(lrf)}/mi, 4mi easy")
         if wk == 10:
-            return f"{mi}mi progression: 4mi easy → 6mi @ {pace_str(lrf)}/mi → 4mi @ {pace_str(rpp)}/mi"
+            return (f"<strong>Progression Long Run</strong> — "
+                    f"4mi easy → 6mi @ {pace_str(lrf)}/mi → 4mi @ {pace_str(rpp)}/mi")
         if wk == 11:
-            return f"{mi}mi: 4mi easy → 6mi @ {pace_str(rpp)}/mi → 4mi @ {pace_str(rp)}/mi"
+            return (f"<strong>Peak Long Run</strong> — "
+                    f"4mi easy → 6mi @ {pace_str(rpp)}/mi → 4mi @ {pace_str(rp)}/mi")
         if wk == 12:
-            return f"{mi}mi long @ {pace_str(lr)}/mi — reset after peak"
+            return (f"<strong>Easy Long Run</strong> — "
+                    f"{mi}mi @ {pace_str(lr)}/mi, reset week")
         if wk == 13:
-            return f"{mi}mi easy @ {pace_str(lr)}/mi — legs should feel great"
+            return (f"<strong>Taper Long Run</strong> — "
+                    f"{mi}mi @ {pace_str(lr)}/mi, legs should feel great")
 
     return f"{miles}mi"
 
@@ -242,12 +283,13 @@ def day_detail(wk: int, day_idx: int, dtype: str, miles: float, p: dict) -> str:
 def build_schedule(paces: dict) -> list:
     schedule = []
     for cfg in WEEK_CONFIGS:
-        wk      = cfg["wk"]
-        phase   = cfg["phase"]
-        total   = cfg["total"]
-        day_mi  = cfg["miles"]
-        types   = WEEK_DAY_TYPES[wk - 1]
-        wk_date = PLAN_START + timedelta(weeks=wk - 1)
+        wk       = cfg["wk"]
+        phase    = cfg["phase"]
+        total    = cfg["total"]
+        day_mi   = cfg["miles"]
+        types    = WEEK_DAY_TYPES[wk - 1]
+        wk_start = PLAN_START + timedelta(weeks=wk - 1)
+        wk_end   = wk_start + timedelta(days=6)
 
         days = []
         for i, (day, mi, dtype) in enumerate(zip(DAYS, day_mi, types)):
@@ -259,7 +301,8 @@ def build_schedule(paces: dict) -> list:
         long_mi = day_mi[6]
         schedule.append({
             "wk": wk, "phase": phase, "total": total,
-            "week_of": wk_date.strftime("%b %-d"),
+            "week_of": wk_start.strftime("%b %-d"),
+            "date_range": f"{wk_start.strftime('%b %-d')} – {wk_end.strftime('%b %-d')}",
             "long_mi": long_mi, "days": days,
         })
     return schedule
@@ -302,58 +345,67 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
               color:{'#C62828' if r['effort']=='Hard' else '#E85D04'};">{r['effort']}</span></td>
         </tr>"""
 
-    # Calendar weeks
+    # Calendar weeks — Runna-style vertical list
     cal_html = ""
     for week in schedule:
         wk    = week["wk"]
         phase = week["phase"]
         color = PHASE_COLORS.get(phase, "#555")
+        non_rest = sum(1 for d in week["days"] if d["type"] != "Rest")
 
-        # Day cells
-        cells = ""
+        day_rows = ""
         for d in week["days"]:
-            bg, fg = DAY_TYPE_STYLE.get(d["type"], ("#F5F5F5", "#999"))
+            label = DISPLAY_LABEL.get(d["type"], d["type"])
+            dot   = DOT_COLOR.get(d["type"], "#999")
             if d["miles"] == 0:
-                miles_str = "—"
+                mi_str = ""
             elif d["miles"] == int(d["miles"]):
-                miles_str = f"{int(d['miles'])}"
+                mi_str = f" · {int(d['miles'])}mi"
             else:
-                miles_str = f"{d['miles']}"
-            cells += f"""
-          <div class="cal-day" style="background:{bg};color:{fg};">
-            <div class="cal-day-name">{d['day'].upper()}</div>
-            <div class="cal-day-miles">{miles_str}</div>
-            <div class="cal-day-type">{d['type']}</div>
+                mi_str = f" · {d['miles']}mi"
+            muted = 'style="color:var(--muted);"' if d["type"] == "Rest" else ""
+            day_rows += f"""
+          <div class="day-row">
+            <div class="day-dot" style="background:{dot};"></div>
+            <span class="day-name">{d['day']}</span>
+            <span class="day-info" {muted}>{label}{mi_str}</span>
           </div>"""
 
-        # Key run details (non-easy, non-rest)
-        key_details = ""
+        detail_rows = ""
         for d in week["days"]:
             if d["type"] not in ("Easy", "Rest"):
-                _, fg = DAY_TYPE_STYLE.get(d["type"], ("#555", "#555"))
-                mi_label = f"{int(d['miles']) if d['miles']==int(d['miles']) else d['miles']}mi · " if d["miles"] > 0 else ""
-                key_details += f"""
-          <div class="run-detail">
-            <span class="run-day" style="color:{fg};">{d['day']}</span>
-            <span class="run-text">{mi_label}{d['detail']}</span>
+                dot = DOT_COLOR.get(d["type"], "#999")
+                detail_rows += f"""
+          <div class="detail-row">
+            <div class="detail-dot" style="background:{dot};"></div>
+            <div>
+              <span class="detail-label" style="color:{dot};">{d['day']} · {DISPLAY_LABEL.get(d['type'], d['type'])}</span>
+              <div class="detail-text">{d['detail']}</div>
+            </div>
           </div>"""
 
-        seven_day = all(d["type"] != "Rest" for d in week["days"])
-        seven_badge = ' <span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-size:0.65rem;">7 days</span>' if seven_day else ""
+        details_block = (f'<div class="workout-details">{detail_rows}\n        </div>'
+                         if detail_rows else "")
 
         cal_html += f"""
       <div class="week-card">
-        <div class="week-header">
-          <span class="week-num">Week {wk}</span>
-          <span class="week-date">{week['week_of']}</span>
-          <span class="badge" style="background:{color}18;color:{color};border:1px solid {color}40;">{phase}</span>
-          {seven_badge}
-          <span class="week-mi">{int(week['total'])} mi total</span>
+        <div class="week-meta">
+          <div>
+            <div class="week-dates">{week['date_range']}</div>
+            <div class="week-title-row">
+              <span class="week-title-num">Week {wk}</span>
+              <span class="badge" style="background:{color}18;color:{color};border:1px solid {color}40;">{phase}</span>
+            </div>
+          </div>
+          <div class="week-stats">
+            <div>{non_rest} workouts</div>
+            <div style="font-weight:600;color:var(--ink);">{int(week['total'])} mi</div>
+          </div>
         </div>
-        <div class="cal-grid">{cells}
+        <div class="week-divider"></div>
+        <div class="day-list">{day_rows}
         </div>
-        <div class="run-details">{key_details}
-        </div>
+        {details_block}
       </div>"""
 
     # Hero stats
@@ -427,58 +479,47 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
     tr:last-child td {{ border-bottom:none; }}
     .table-wrap {{ background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); overflow-x:auto; }}
 
-    /* Calendar */
+    /* Calendar — Runna-style list */
     .week-card {{
-      background: var(--card); border-radius:16px;
-      padding: 1.25rem 1.4rem; margin-bottom: 0.75rem;
+      background: var(--card); border-radius: 16px;
+      padding: 1.25rem 1.5rem; margin-bottom: 0.75rem;
       box-shadow: 0 2px 8px rgba(0,0,0,.05);
     }}
-    .week-header {{
-      display: flex; align-items: center; gap: 0.6rem;
-      flex-wrap: wrap; margin-bottom: 1rem;
+    .week-meta {{
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 0.8rem;
     }}
-    .week-num {{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.88rem; }}
-    .week-date {{ font-size:0.8rem; color:var(--muted); }}
-    .week-mi {{ font-size:0.8rem; font-weight:600; color:var(--muted); margin-left:auto; }}
+    .week-dates {{
+      font-size: 0.7rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;
+    }}
+    .week-title-row {{ display: flex; align-items: center; gap: 0.5rem; }}
+    .week-title-num {{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }}
+    .week-stats {{ text-align: right; font-size: 0.78rem; color: var(--muted); line-height: 1.7; }}
+    .week-divider {{ height: 1px; background: var(--border); margin-bottom: 0.8rem; }}
 
-    .cal-grid {{
-      display: grid; grid-template-columns: repeat(7, 1fr);
-      gap: 0.35rem; margin-bottom: 1rem;
-    }}
-    .cal-day {{
-      border-radius: 10px; padding: 0.55rem 0.3rem;
-      text-align: center; min-height: 72px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 0.1rem;
-    }}
-    .cal-day-name {{
-      font-size: 0.58rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55;
-    }}
-    .cal-day-miles {{
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700; font-size: 1.15rem; line-height: 1;
-    }}
-    .cal-day-type {{
-      font-size: 0.58rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.8;
-    }}
+    .day-list {{ display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }}
+    .day-row {{ display: flex; align-items: center; gap: 0.65rem; }}
+    .day-dot {{ width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }}
+    .day-name {{ font-size: 0.8rem; font-weight: 600; color: var(--muted); width: 32px; flex-shrink: 0; }}
+    .day-info {{ font-size: 0.9rem; }}
 
-    .run-details {{ display: flex; flex-direction: column; gap: 0.35rem; }}
-    .run-detail {{ display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.82rem; }}
-    .run-day {{ font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; min-width: 28px; }}
-    .run-text {{ color: #333; line-height: 1.4; }}
+    .workout-details {{
+      border-top: 1px solid var(--border); padding-top: 0.85rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }}
+    .detail-row {{ display: flex; gap: 0.75rem; align-items: flex-start; }}
+    .detail-dot {{ width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; margin-top: 0.25rem; }}
+    .detail-label {{ display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }}
+    .detail-text {{ font-size: 0.84rem; color: #444; line-height: 1.55; }}
 
     footer {{ background:var(--ink); color:#555; text-align:center; padding:2rem; font-size:0.82rem; }}
     footer a {{ color:#888; }}
 
     @media (max-width: 640px) {{
-      .cal-grid {{ grid-template-columns: repeat(7, 1fr); gap: 0.2rem; }}
-      .cal-day {{ min-height: 58px; padding: 0.4rem 0.15rem; }}
-      .cal-day-miles {{ font-size: 0.95rem; }}
-      .cal-day-type {{ display: none; }}
       .hstat {{ padding: 0.75rem 0.9rem; }}
       .hstat-num {{ font-size: 1.2rem; }}
+      .week-card {{ padding: 1rem 1.1rem; }}
     }}
   </style>
 </head>
@@ -539,8 +580,8 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
 
   <section>
     <div class="sh">
-      <h2>14-Week Calendar</h2>
-      <p>2 workouts + 1 long run per week · 4 seven-day weeks at peak · cutbacks at ~83% volume.</p>
+      <h2>14-Week Plan</h2>
+      <p>Intervals + Tempo + Long Run every week · 4 no-rest weeks at peak · cutbacks at ~83% volume.</p>
     </div>
     {cal_html}
   </section>
@@ -572,7 +613,7 @@ def main() -> None:
     for w in plan:
         tue = w["days"][1]
         print(f"{w['wk']:<4} {w['week_of']:<10} {w['phase']:<10} "
-              f"{int(w['total']):<6}  {int(w['long_mi']):<5}  {tue['detail']}")
+              f"{int(w['total']):<6}  {int(w['long_mi']):<5}  {re.sub('<[^>]+>', '', tue['detail'])}")
 
     PLAN_CSV.parent.mkdir(parents=True, exist_ok=True)
     rows = []
