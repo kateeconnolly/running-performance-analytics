@@ -44,14 +44,15 @@ DISPLAY_LABEL = {
     "Race":        "Race Day",
 }
 
-DOT_COLOR = {
-    "Easy":        "#5BAD46",   # green
-    "Workout":     "#E85D04",   # red-orange
-    "Medium-Long": "#F59E0B",   # amber
-    "Long":        "#7C3AED",   # purple
-    "Rest":        "#D1D5DB",   # gray
-    "Shakeout":    "#F59E0B",   # amber
-    "Race":        "#E85D04",   # orange
+GRID_STYLE = {
+    # (background, text color)
+    "Easy":        ("#F0F6E8", "#4A7232"),
+    "Workout":     ("#FEF0E7", "#C24F04"),
+    "Medium-Long": ("#FEF8E4", "#97650A"),
+    "Long":        ("#EDE9F7", "#5A4498"),
+    "Rest":        ("#F5F3EF", "#9B9590"),
+    "Shakeout":    ("#FEF8E4", "#97650A"),
+    "Race":        ("#E85D04", "#FFFFFF"),
 }
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -345,43 +346,42 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
               color:{'#C62828' if r['effort']=='Hard' else '#E85D04'};">{r['effort']}</span></td>
         </tr>"""
 
-    # Calendar weeks — Runna-style vertical list
+    # Calendar weeks — 7-column grid
     cal_html = ""
     for week in schedule:
         wk    = week["wk"]
         phase = week["phase"]
         color = PHASE_COLORS.get(phase, "#555")
-        non_rest = sum(1 for d in week["days"] if d["type"] != "Rest")
+        seven_day = all(d["type"] != "Rest" for d in week["days"])
+        seven_badge = (' <span class="badge" style="background:#FEF0E7;color:#C24F04;'
+                       'border:1px solid #FDDCC7;font-size:0.65rem;">7 days</span>'
+                       if seven_day else "")
 
-        day_rows = ""
+        cells = ""
         for d in week["days"]:
-            label = DISPLAY_LABEL.get(d["type"], d["type"])
-            dot   = DOT_COLOR.get(d["type"], "#999")
+            bg, fg = GRID_STYLE.get(d["type"], ("#F5F3EF", "#9B9590"))
+            label  = DISPLAY_LABEL.get(d["type"], d["type"])
             if d["miles"] == 0:
-                mi_str = ""
+                mi_str = "—"
             elif d["miles"] == int(d["miles"]):
-                mi_str = f" · {int(d['miles'])}mi"
+                mi_str = str(int(d["miles"]))
             else:
-                mi_str = f" · {d['miles']}mi"
-            muted = 'style="color:var(--muted);"' if d["type"] == "Rest" else ""
-            day_rows += f"""
-          <div class="day-row">
-            <div class="day-dot" style="background:{dot};"></div>
-            <span class="day-name">{d['day']}</span>
-            <span class="day-info" {muted}>{label}{mi_str}</span>
+                mi_str = str(d["miles"])
+            cells += f"""
+          <div class="cal-day" style="background:{bg};color:{fg};">
+            <div class="cal-day-name">{d['day'].upper()}</div>
+            <div class="cal-day-miles">{mi_str}</div>
+            <div class="cal-day-type">{label}</div>
           </div>"""
 
         detail_rows = ""
         for d in week["days"]:
             if d["type"] not in ("Easy", "Rest"):
-                dot = DOT_COLOR.get(d["type"], "#999")
+                _, fg = GRID_STYLE.get(d["type"], ("#F5F3EF", "#555"))
                 detail_rows += f"""
           <div class="detail-row">
-            <div class="detail-dot" style="background:{dot};"></div>
-            <div>
-              <span class="detail-label" style="color:{dot};">{d['day']} · {DISPLAY_LABEL.get(d['type'], d['type'])}</span>
-              <div class="detail-text">{d['detail']}</div>
-            </div>
+            <span class="detail-day" style="color:{fg};">{d['day']}</span>
+            <span class="detail-text">{d['detail']}</span>
           </div>"""
 
         details_block = (f'<div class="workout-details">{detail_rows}\n        </div>'
@@ -389,21 +389,13 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
 
         cal_html += f"""
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">{week['date_range']}</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week {wk}</span>
-              <span class="badge" style="background:{color}18;color:{color};border:1px solid {color}40;">{phase}</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>{non_rest} workouts</div>
-            <div style="font-weight:600;color:var(--ink);">{int(week['total'])} mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">{week['date_range']}</span>
+          <span class="badge" style="background:{color}18;color:{color};border:1px solid {color}40;">{phase}</span>
+          {seven_badge}
+          <span class="week-mi">{int(week['total'])} mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">{day_rows}
+        <div class="cal-grid">{cells}
         </div>
         {details_block}
       </div>"""
@@ -479,47 +471,59 @@ def render_html(paces: dict, halfs: pd.DataFrame, schedule: list) -> str:
     tr:last-child td {{ border-bottom:none; }}
     .table-wrap {{ background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); overflow-x:auto; }}
 
-    /* Calendar — Runna-style list */
+    /* Calendar — 7-column grid */
     .week-card {{
       background: var(--card); border-radius: 16px;
-      padding: 1.25rem 1.5rem; margin-bottom: 0.75rem;
+      padding: 1.25rem 1.4rem; margin-bottom: 0.75rem;
       box-shadow: 0 2px 8px rgba(0,0,0,.05);
     }}
-    .week-meta {{
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 0.8rem;
+    .week-header {{
+      display: flex; align-items: center; gap: 0.6rem;
+      flex-wrap: wrap; margin-bottom: 0.85rem;
     }}
-    .week-dates {{
-      font-size: 0.7rem; font-weight: 600; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;
-    }}
-    .week-title-row {{ display: flex; align-items: center; gap: 0.5rem; }}
-    .week-title-num {{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }}
-    .week-stats {{ text-align: right; font-size: 0.78rem; color: var(--muted); line-height: 1.7; }}
-    .week-divider {{ height: 1px; background: var(--border); margin-bottom: 0.8rem; }}
+    .week-dates {{ font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }}
+    .week-mi {{ font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-left: auto; }}
 
-    .day-list {{ display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }}
-    .day-row {{ display: flex; align-items: center; gap: 0.65rem; }}
-    .day-dot {{ width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }}
-    .day-name {{ font-size: 0.8rem; font-weight: 600; color: var(--muted); width: 32px; flex-shrink: 0; }}
-    .day-info {{ font-size: 0.9rem; }}
+    .cal-grid {{
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 0.35rem; margin-bottom: 1rem;
+    }}
+    .cal-day {{
+      border-radius: 10px; padding: 0.6rem 0.3rem;
+      text-align: center; min-height: 76px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.12rem;
+    }}
+    .cal-day-name {{
+      font-size: 0.58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55;
+    }}
+    .cal-day-miles {{
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.15rem; line-height: 1;
+    }}
+    .cal-day-type {{
+      font-size: 0.57rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.75;
+    }}
 
     .workout-details {{
-      border-top: 1px solid var(--border); padding-top: 0.85rem;
-      display: flex; flex-direction: column; gap: 0.75rem;
+      border-top: 1px solid var(--border); padding-top: 0.8rem;
+      display: flex; flex-direction: column; gap: 0.4rem;
     }}
-    .detail-row {{ display: flex; gap: 0.75rem; align-items: flex-start; }}
-    .detail-dot {{ width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; margin-top: 0.25rem; }}
-    .detail-label {{ display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }}
-    .detail-text {{ font-size: 0.84rem; color: #444; line-height: 1.55; }}
+    .detail-row {{ display: flex; align-items: baseline; gap: 0.55rem; font-size: 0.82rem; }}
+    .detail-day {{ font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 28px; }}
+    .detail-text {{ color: #444; line-height: 1.5; flex: 1; }}
 
     footer {{ background:var(--ink); color:#555; text-align:center; padding:2rem; font-size:0.82rem; }}
     footer a {{ color:#888; }}
 
     @media (max-width: 640px) {{
+      .cal-day {{ min-height: 60px; padding: 0.4rem 0.15rem; }}
+      .cal-day-miles {{ font-size: 0.95rem; }}
+      .cal-day-type {{ display: none; }}
       .hstat {{ padding: 0.75rem 0.9rem; }}
       .hstat-num {{ font-size: 1.2rem; }}
-      .week-card {{ padding: 1rem 1.1rem; }}
     }}
   </style>
 </head>

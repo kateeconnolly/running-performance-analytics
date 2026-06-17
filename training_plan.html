@@ -66,47 +66,59 @@
     tr:last-child td { border-bottom:none; }
     .table-wrap { background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); overflow-x:auto; }
 
-    /* Calendar — Runna-style list */
+    /* Calendar — 7-column grid */
     .week-card {
       background: var(--card); border-radius: 16px;
-      padding: 1.25rem 1.5rem; margin-bottom: 0.75rem;
+      padding: 1.25rem 1.4rem; margin-bottom: 0.75rem;
       box-shadow: 0 2px 8px rgba(0,0,0,.05);
     }
-    .week-meta {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 0.8rem;
+    .week-header {
+      display: flex; align-items: center; gap: 0.6rem;
+      flex-wrap: wrap; margin-bottom: 0.85rem;
     }
-    .week-dates {
-      font-size: 0.7rem; font-weight: 600; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;
-    }
-    .week-title-row { display: flex; align-items: center; gap: 0.5rem; }
-    .week-title-num { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
-    .week-stats { text-align: right; font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
-    .week-divider { height: 1px; background: var(--border); margin-bottom: 0.8rem; }
+    .week-dates { font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+    .week-mi { font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-left: auto; }
 
-    .day-list { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }
-    .day-row { display: flex; align-items: center; gap: 0.65rem; }
-    .day-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
-    .day-name { font-size: 0.8rem; font-weight: 600; color: var(--muted); width: 32px; flex-shrink: 0; }
-    .day-info { font-size: 0.9rem; }
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 0.35rem; margin-bottom: 1rem;
+    }
+    .cal-day {
+      border-radius: 10px; padding: 0.6rem 0.3rem;
+      text-align: center; min-height: 76px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.12rem;
+    }
+    .cal-day-name {
+      font-size: 0.58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55;
+    }
+    .cal-day-miles {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.15rem; line-height: 1;
+    }
+    .cal-day-type {
+      font-size: 0.57rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.75;
+    }
 
     .workout-details {
-      border-top: 1px solid var(--border); padding-top: 0.85rem;
-      display: flex; flex-direction: column; gap: 0.75rem;
+      border-top: 1px solid var(--border); padding-top: 0.8rem;
+      display: flex; flex-direction: column; gap: 0.4rem;
     }
-    .detail-row { display: flex; gap: 0.75rem; align-items: flex-start; }
-    .detail-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; margin-top: 0.25rem; }
-    .detail-label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }
-    .detail-text { font-size: 0.84rem; color: #444; line-height: 1.55; }
+    .detail-row { display: flex; align-items: baseline; gap: 0.55rem; font-size: 0.82rem; }
+    .detail-day { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 28px; }
+    .detail-text { color: #444; line-height: 1.5; flex: 1; }
 
     footer { background:var(--ink); color:#555; text-align:center; padding:2rem; font-size:0.82rem; }
     footer a { color:#888; }
 
     @media (max-width: 640px) {
+      .cal-day { min-height: 60px; padding: 0.4rem 0.15rem; }
+      .cal-day-miles { font-size: 0.95rem; }
+      .cal-day-type { display: none; }
       .hstat { padding: 0.75rem 0.9rem; }
       .hstat-num { font-size: 1.2rem; }
-      .week-card { padding: 1rem 1.1rem; }
     }
   </style>
 </head>
@@ -261,1066 +273,828 @@
     </div>
     
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jun 22 – Jun 28</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 1</span>
-              <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">52 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jun 22 – Jun 28</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">52 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 9mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 10mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 10mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Fartlek</strong> — 2mi WU, 6×3min @ 6:34–6:46/mi w/ 2min easy jog, 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Fartlek</strong> — 2mi WU, 6×3min @ 6:34–6:46/mi w/ 2min easy jog, 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text">10mi easy @ 7:52–8:16/mi + 6×20sec strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text">10mi easy @ 7:52–8:16/mi + 6×20sec strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 10mi @ 7:43–8:07/mi, all conversation pace</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 10mi @ 7:43–8:07/mi, all conversation pace</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jun 29 – Jul 5</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 2</span>
-              <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">56 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jun 29 – Jul 5</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">56 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 10mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 11mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 10mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Cruise Intervals</strong> — 2mi WU, 3×10min @ 6:34–6:46/mi (90s jog), 1mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Cruise Intervals</strong> — 2mi WU, 3×10min @ 6:34–6:46/mi (90s jog), 1mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text">11mi easy @ 7:52–8:16/mi + 6×20sec strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text">11mi easy @ 7:52–8:16/mi + 6×20sec strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 10mi @ 7:43–8:07/mi, all conversation pace</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 10mi @ 7:43–8:07/mi, all conversation pace</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jul 6 – Jul 12</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 3</span>
-              <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">60 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jul 6 – Jul 12</span>
+          <span class="badge" style="background:#1565C018;color:#1565C0;border:1px solid #1565C040;">Base</span>
+          
+          <span class="week-mi">60 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 12mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 11mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Tempo Run</strong> — 2mi WU, 20min continuous @ 6:34–6:46/mi, 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Tempo Run</strong> — 2mi WU, 20min continuous @ 6:34–6:46/mi, 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text">12mi easy @ 7:52–8:16/mi + 6×20sec strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text">12mi easy @ 7:52–8:16/mi + 6×20sec strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 11mi @ 7:43–8:07/mi, all conversation pace</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 11mi @ 7:43–8:07/mi, all conversation pace</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jul 13 – Jul 19</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 4</span>
-              <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">48 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jul 13 – Jul 19</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">48 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 9mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 9mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 9mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Easy Fartlek</strong> — 2mi WU, 4×3min @ 6:34–6:46/mi w/ 3min easy jog, 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Easy Fartlek</strong> — 2mi WU, 4×3min @ 6:34–6:46/mi w/ 3min easy jog, 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text">9mi easy @ 7:52–8:16/mi + 4×20sec strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text">9mi easy @ 7:52–8:16/mi + 4×20sec strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 9mi @ 7:43–8:07/mi, all conversation pace</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 9mi @ 7:43–8:07/mi, all conversation pace</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jul 20 – Jul 26</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 5</span>
-              <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">62 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jul 20 – Jul 26</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+          
+          <span class="week-mi">62 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 12mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 12mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 4×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 4×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Progression</strong> — 8mi easy, 2mi @ 6:55–7:04/mi, 2mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Progression</strong> — 8mi easy, 2mi @ 6:55–7:04/mi, 2mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 2mi @ 7:03–7:10/mi</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 2mi @ 7:03–7:10/mi</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Jul 27 – Aug 2</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 6</span>
-              <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">65 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Jul 27 – Aug 2</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+          
+          <span class="week-mi">65 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 12mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 13mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">13</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 13mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">13</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 5×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 5×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Progression</strong> — 8mi easy, 3mi @ 6:55–7:04/mi, 2mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Progression</strong> — 8mi easy, 3mi @ 6:55–7:04/mi, 2mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 3mi @ 7:03–7:10/mi</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 3mi @ 7:03–7:10/mi</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Aug 3 – Aug 9</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 7</span>
-              <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>7 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">68 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Aug 3 – Aug 9</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Build</span>
+           <span class="badge" style="background:#FEF0E7;color:#C24F04;border:1px solid #FDDCC7;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">68 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 12mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" >Easy Run · 4mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">4</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 14mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Tempo Run</strong> — 2mi WU, 25min continuous @ 6:34–6:46/mi, 3mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Tempo Run</strong> — 2mi WU, 25min continuous @ 6:34–6:46/mi, 3mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Progression</strong> — 6mi easy, 4mi @ 6:55–7:04/mi, 2mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Progression</strong> — 6mi easy, 4mi @ 6:55–7:04/mi, 2mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 4mi @ 7:03–7:10/mi</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Progression Long Run</strong> — 10mi @ 7:43–8:07/mi, last 4mi @ 7:03–7:10/mi</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Aug 10 – Aug 16</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 8</span>
-              <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">55 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Aug 10 – Aug 16</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">55 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 10mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 10mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 7mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 12mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Cruise Intervals</strong> — 2mi WU, 3×1mi @ 6:34–6:46/mi (90s jog), 4mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Cruise Intervals</strong> — 2mi WU, 3×1mi @ 6:34–6:46/mi (90s jog), 4mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text">10mi easy @ 7:52–8:16/mi + 4×20sec strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text">10mi easy @ 7:52–8:16/mi + 4×20sec strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 12mi @ 7:43–8:07/mi, controlled and comfortable</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 12mi @ 7:43–8:07/mi, controlled and comfortable</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Aug 17 – Aug 23</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 9</span>
-              <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>7 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">68 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Aug 17 – Aug 23</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#FEF0E7;color:#C24F04;border:1px solid #FDDCC7;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">68 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 10mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 11mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" >Easy Run · 5mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 14mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Race Pace Intervals</strong> — 2mi WU, 2×3mi @ 6:49–6:55/mi (2min jog), 1mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Race Pace Intervals</strong> — 2mi WU, 2×3mi @ 6:49–6:55/mi (2min jog), 1mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Race Effort Blocks</strong> — 4mi easy, 4mi @ 6:55–7:04/mi, 3mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Race Effort Blocks</strong> — 4mi easy, 4mi @ 6:55–7:04/mi, 3mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Long Run w/ Fast Finish</strong> — 4mi easy, 6mi @ 7:28–7:40/mi, 4mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Long Run w/ Fast Finish</strong> — 4mi easy, 6mi @ 7:28–7:40/mi, 4mi easy</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Aug 24 – Aug 30</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 10</span>
-              <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>7 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">70 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Aug 24 – Aug 30</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#FEF0E7;color:#C24F04;border:1px solid #FDDCC7;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">70 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 10mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 10mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 12mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" >Easy Run · 5mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 14mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Race Pace Intervals</strong> — 2mi WU, 2×3mi @ 6:49–6:55/mi (2min jog), 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Race Pace Intervals</strong> — 2mi WU, 2×3mi @ 6:49–6:55/mi (2min jog), 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Race Effort Blocks</strong> — 3mi easy, 5mi @ 6:49–6:55/mi, 4mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Race Effort Blocks</strong> — 3mi easy, 5mi @ 6:49–6:55/mi, 4mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Progression Long Run</strong> — 4mi easy → 6mi @ 7:28–7:40/mi → 4mi @ 7:03–7:10/mi</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Progression Long Run</strong> — 4mi easy → 6mi @ 7:28–7:40/mi → 4mi @ 7:03–7:10/mi</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Aug 31 – Sep 6</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 11</span>
-              <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>7 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">72 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Aug 31 – Sep 6</span>
+          <span class="badge" style="background:#C6282818;color:#C62828;border:1px solid #C6282840;">Peak</span>
+           <span class="badge" style="background:#FEF0E7;color:#C24F04;border:1px solid #FDDCC7;font-size:0.65rem;">7 days</span>
+          <span class="week-mi">72 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 10mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 12mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 10mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 12mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" >Easy Run · 5mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 14mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">14</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Race Simulation</strong> — 2mi WU, 8mi @ 6:49–6:55/mi, 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Race Simulation</strong> — 2mi WU, 8mi @ 6:49–6:55/mi, 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Race Effort Blocks</strong> — 2mi easy, 6mi @ 6:49–6:55/mi, 4mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Race Effort Blocks</strong> — 2mi easy, 6mi @ 6:49–6:55/mi, 4mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Peak Long Run</strong> — 4mi easy → 6mi @ 7:03–7:10/mi → 4mi @ 6:49–6:55/mi</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Peak Long Run</strong> — 4mi easy → 6mi @ 7:03–7:10/mi → 4mi @ 6:49–6:55/mi</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Sep 7 – Sep 13</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 12</span>
-              <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">60 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Sep 7 – Sep 13</span>
+          <span class="badge" style="background:#2E7D3218;color:#2E7D32;border:1px solid #2E7D3240;">Cutback</span>
+          
+          <span class="week-mi">60 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 11mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 9mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">9</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Tempo · 11mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">11</div>
+            <div class="cal-day-type">Tempo</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 8mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 12mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">12</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 4×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>Mile Repeats</strong> — 2mi WU, 4×1mi @ 6:34–6:46/mi (90s jog), 3mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Thu · Tempo</span>
-              <div class="detail-text"><strong>Progression</strong> — 7mi easy, 3mi @ 6:55–7:04/mi, 1mi easy</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Thu</span>
+            <span class="detail-text"><strong>Progression</strong> — 7mi easy, 3mi @ 6:55–7:04/mi, 1mi easy</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Easy Long Run</strong> — 12mi @ 7:43–8:07/mi, reset week</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Easy Long Run</strong> — 12mi @ 7:43–8:07/mi, reset week</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Sep 14 – Sep 20</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 13</span>
-              <span class="badge" style="background:#6B6B6B18;color:#6B6B6B;border:1px solid #6B6B6B40;">Taper</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>6 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">42 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Sep 14 – Sep 20</span>
+          <span class="badge" style="background:#6B6B6B18;color:#6B6B6B;border:1px solid #6B6B6B40;">Taper</span>
+          
+          <span class="week-mi">42 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 6mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">6</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Intervals · 10mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">10</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 6mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">6</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" >Intervals · 8mi</span>
+          <div class="cal-day" style="background:#FEF0E7;color:#C24F04;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">8</div>
+            <div class="cal-day-type">Intervals</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Easy Run · 5mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">5</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#7C3AED;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Long Run · 7mi</span>
+          <div class="cal-day" style="background:#EDE9F7;color:#5A4498;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">7</div>
+            <div class="cal-day-type">Long Run</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Tue · Intervals</span>
-              <div class="detail-text"><strong>800m Repeats</strong> — 2mi WU, 6×800m @ 6:35–6:44/mi (90s jog), 2mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Tue</span>
+            <span class="detail-text"><strong>800m Repeats</strong> — 2mi WU, 6×800m @ 6:35–6:44/mi (90s jog), 2mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Thu · Intervals</span>
-              <div class="detail-text"><strong>Race Preview</strong> — 1mi WU, 4mi @ 6:49–6:55/mi, 3mi CD</div>
-            </div>
+            <span class="detail-day" style="color:#C24F04;">Thu</span>
+            <span class="detail-text"><strong>Race Preview</strong> — 1mi WU, 4mi @ 6:49–6:55/mi, 3mi CD</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#7C3AED;"></div>
-            <div>
-              <span class="detail-label" style="color:#7C3AED;">Sun · Long Run</span>
-              <div class="detail-text"><strong>Taper Long Run</strong> — 7mi @ 7:43–8:07/mi, legs should feel great</div>
-            </div>
+            <span class="detail-day" style="color:#5A4498;">Sun</span>
+            <span class="detail-text"><strong>Taper Long Run</strong> — 7mi @ 7:43–8:07/mi, legs should feel great</span>
           </div>
         </div>
       </div>
       <div class="week-card">
-        <div class="week-meta">
-          <div>
-            <div class="week-dates">Sep 21 – Sep 27</div>
-            <div class="week-title-row">
-              <span class="week-title-num">Week 14</span>
-              <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Race Week</span>
-            </div>
-          </div>
-          <div class="week-stats">
-            <div>5 workouts</div>
-            <div style="font-weight:600;color:var(--ink);">25 mi</div>
-          </div>
+        <div class="week-header">
+          <span class="week-dates">Sep 21 – Sep 27</span>
+          <span class="badge" style="background:#E85D0418;color:#E85D04;border:1px solid #E85D0440;">Race Week</span>
+          
+          <span class="week-mi">25 mi</span>
         </div>
-        <div class="week-divider"></div>
-        <div class="day-list">
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Mon</span>
-            <span class="day-info" >Easy Run · 4mi</span>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">MON</div>
+            <div class="cal-day-miles">4</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Tue</span>
-            <span class="day-info" >Shakeout · 3mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">TUE</div>
+            <div class="cal-day-miles">3</div>
+            <div class="cal-day-type">Shakeout</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#5BAD46;"></div>
-            <span class="day-name">Wed</span>
-            <span class="day-info" >Easy Run · 3mi</span>
+          <div class="cal-day" style="background:#F0F6E8;color:#4A7232;">
+            <div class="cal-day-name">WED</div>
+            <div class="cal-day-miles">3</div>
+            <div class="cal-day-type">Easy Run</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Thu</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">THU</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#F59E0B;"></div>
-            <span class="day-name">Fri</span>
-            <span class="day-info" >Shakeout · 2mi</span>
+          <div class="cal-day" style="background:#FEF8E4;color:#97650A;">
+            <div class="cal-day-name">FRI</div>
+            <div class="cal-day-miles">2</div>
+            <div class="cal-day-type">Shakeout</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#D1D5DB;"></div>
-            <span class="day-name">Sat</span>
-            <span class="day-info" style="color:var(--muted);">Rest</span>
+          <div class="cal-day" style="background:#F5F3EF;color:#9B9590;">
+            <div class="cal-day-name">SAT</div>
+            <div class="cal-day-miles">—</div>
+            <div class="cal-day-type">Rest</div>
           </div>
-          <div class="day-row">
-            <div class="day-dot" style="background:#E85D04;"></div>
-            <span class="day-name">Sun</span>
-            <span class="day-info" >Race Day · 13.1mi</span>
+          <div class="cal-day" style="background:#E85D04;color:#FFFFFF;">
+            <div class="cal-day-name">SUN</div>
+            <div class="cal-day-miles">13.1</div>
+            <div class="cal-day-type">Race Day</div>
           </div>
         </div>
         <div class="workout-details">
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Tue · Shakeout</span>
-              <div class="detail-text">Easy + 4×100m strides at race effort</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Tue</span>
+            <span class="detail-text">Easy + 4×100m strides at race effort</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#F59E0B;"></div>
-            <div>
-              <span class="detail-label" style="color:#F59E0B;">Fri · Shakeout</span>
-              <div class="detail-text">2mi shakeout + 2 strides</div>
-            </div>
+            <span class="detail-day" style="color:#97650A;">Fri</span>
+            <span class="detail-text">2mi shakeout + 2 strides</span>
           </div>
           <div class="detail-row">
-            <div class="detail-dot" style="background:#E85D04;"></div>
-            <div>
-              <span class="detail-label" style="color:#E85D04;">Sun · Race Day</span>
-              <div class="detail-text">RACE — goal 6:49–6:55/mi → 1:30:00</div>
-            </div>
+            <span class="detail-day" style="color:#FFFFFF;">Sun</span>
+            <span class="detail-text">RACE — goal 6:49–6:55/mi → 1:30:00</span>
           </div>
         </div>
       </div>
