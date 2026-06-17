@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running Performance Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:      #FC4C02;
+      --blue:        #1565C0;
+      --dark:        #111827;
+      --gray:        #6b7280;
+      --light-gray:  #f9fafb;
+      --border:      #e5e7eb;
+      --white:       #ffffff;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:   0 4px 6px rgba(0,0,0,.06), 0 10px 15px rgba(0,0,0,.04);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--light-gray);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 700; font-size: 0.9rem; color: var(--dark);
+      text-decoration: none; display: flex; align-items: center; gap: 0.55rem;
+    }
+    .logo-dot {
+      width: 9px; height: 9px; background: var(--orange);
+      border-radius: 50%; display: inline-block; flex-shrink: 0;
+    }
+
+    .btn-gh {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: var(--dark); color: #fff; padding: 0.4rem 0.95rem;
+      border-radius: 7px; font-size: 0.82rem; font-weight: 500;
+      text-decoration: none; transition: background .15s;
+    }
+    .btn-gh:hover { background: #374151; }
+    .btn-gh svg { width: 15px; height: 15px; fill: currentColor; }
+
+    /* ── Hero ─────────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #1c1917 100%);
+      color: #fff; padding: 5rem 2rem 4rem; text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(252,76,2,.15); border: 1px solid rgba(252,76,2,.35);
+      color: #fb923c; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .3rem .85rem; border-radius: 20px; margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+      font-weight: 800; letter-spacing: -.025em; line-height: 1.13;
+      margin-bottom: 1.1rem;
+    }
+    .hero h1 em { font-style: normal; color: var(--orange); }
+
+    .hero-sub {
+      font-size: 1.05rem; color: #94a3b8; max-width: 560px;
+      margin: 0 auto 2.2rem;
+    }
+
+    .stats-strip {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: .65rem;
+      margin-bottom: 2.2rem;
+    }
+    .stat-pill {
+      display: flex; align-items: center; gap: .45rem;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px; padding: .4rem 1rem; font-size: .88rem;
+    }
+    .stat-pill strong { color: #fff; font-weight: 600; }
+    .stat-pill span   { color: #94a3b8; }
+
+    .hero-links { display: flex; justify-content: center; gap: .75rem; flex-wrap: wrap; }
+    .hero-btn {
+      padding: .6rem 1.4rem; border-radius: 8px; font-size: .9rem;
+      font-weight: 600; text-decoration: none; transition: all .15s;
+    }
+    .hero-btn-primary {
+      background: var(--orange); color: #fff;
+    }
+    .hero-btn-primary:hover { background: #e84402; }
+    .hero-btn-outline {
+      background: transparent; color: #e2e8f0;
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .hero-btn-outline:hover { background: rgba(255,255,255,.07); }
+
+    /* ── Page sections ────────────────────────────────────────────────── */
+    main { max-width: 1180px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+    section { margin-bottom: 4.5rem; }
+
+    .section-header { margin-bottom: 1.6rem; }
+    .section-header h2 {
+      font-size: 1.45rem; font-weight: 700; color: var(--dark); margin-bottom: .3rem;
+    }
+    .section-header p { color: var(--gray); font-size: .93rem; max-width: 680px; }
+
+    /* ── Chart cards ──────────────────────────────────────────────────── */
+    .card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+    .card img { width: 100%; height: auto; display: block; }
+
+    .card-cap {
+      padding: .85rem 1.1rem; border-top: 1px solid var(--border);
+    }
+    .card-cap strong {
+      display: block; font-size: .88rem; font-weight: 600;
+      color: var(--dark); margin-bottom: .2rem;
+    }
+    .card-cap span { font-size: .8rem; color: var(--gray); }
+
+    /* ── Grid layouts ─────────────────────────────────────────────────── */
+    .g2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 720px) {
+      .g2 { grid-template-columns: 1fr; }
+      .model-grid { grid-template-columns: 1fr !important; }
+    }
+
+    /* ── Model section ────────────────────────────────────────────────── */
+    .model-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.2rem; align-items: start;
+    }
+
+    .explainer {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.75rem; box-shadow: var(--shadow-sm);
+    }
+    .explainer h3 { font-size: 1rem; font-weight: 700; margin-bottom: .65rem; }
+    .explainer p {
+      font-size: .875rem; color: var(--gray); line-height: 1.7;
+      margin-bottom: .9rem;
+    }
+    .explainer p:last-child { margin-bottom: 0; }
+
+    .finding {
+      background: #fff7f0; border: 1px solid #fed7aa;
+      border-left: 3px solid var(--orange);
+      border-radius: 0 8px 8px 0; padding: .85rem 1rem;
+      margin: .9rem 0; font-size: .845rem; color: #7c2d12; line-height: 1.65;
+    }
+    .finding strong { color: #c2410c; }
+
+    table.feats {
+      width: 100%; border-collapse: collapse;
+      font-size: .83rem; margin-top: .65rem;
+    }
+    table.feats th {
+      text-align: left; padding: .35rem .55rem;
+      color: var(--gray); font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+    table.feats td {
+      padding: .35rem .55rem; border-bottom: 1px solid #f3f4f6;
+      vertical-align: top;
+    }
+    table.feats tr:last-child td { border-bottom: none; }
+    table.feats .fc { font-family: monospace; color: var(--blue); font-size: .8rem; }
+
+    /* ── Method cards ─────────────────────────────────────────────────── */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+    }
+    .method-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem; box-shadow: var(--shadow-sm);
+    }
+    .step {
+      display: inline-block; background: var(--orange); color: #fff;
+      font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: .2rem .55rem; border-radius: 5px;
+      margin-bottom: .6rem;
+    }
+    .method-card h3 { font-size: .92rem; font-weight: 700; margin-bottom: .45rem; }
+    .method-card p  { font-size: .845rem; color: var(--gray); line-height: 1.65; }
+    .method-card code {
+      background: #f3f4f6; border: 1px solid var(--border);
+      border-radius: 4px; padding: .1em .35em;
+      font-size: .78rem; color: var(--blue);
+    }
+
+    /* ── Stack & tech pills ────────────────────────────────────────────── */
+    .tech-row {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem;
+    }
+    .tech-pill {
+      background: #f3f4f6; border: 1px solid var(--border);
+      border-radius: 20px; padding: .3rem .75rem;
+      font-size: .78rem; font-weight: 500; color: #374151;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────────── */
+    footer {
+      background: var(--dark); color: #9ca3af;
+      text-align: center; padding: 2.5rem 2rem;
+      font-size: .84rem; line-height: 1.8;
+    }
+    footer a { color: #d1d5db; }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="logo-dot"></span>
+    Running Performance Analytics
+  </a>
+  <a href="https://github.com/kateeconnolly/running-performance-analytics"
+     class="btn-gh" target="_blank" rel="noopener">
+    <svg viewBox="0 0 16 16">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+               0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+               -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+               .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+               -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+               .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+               .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+               0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+    </svg>
+    View on GitHub
+  </a>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-badge">Data Science Portfolio</div>
+  <h1>Running <em>Performance</em><br>Analytics</h1>
+  <p class="hero-sub">
+    An end-to-end Python pipeline that transforms a personal Strava export into
+    training-load metrics, effort classification, and exploratory pace modelling.
+  </p>
+
+  <div class="stats-strip">
+    <div class="stat-pill"><strong>1,225</strong> <span>runs</span></div>
+    <div class="stat-pill"><strong>5,297</strong> <span>miles</span></div>
+    <div class="stat-pill"><strong>4.8 yrs</strong> <span>of data</span></div>
+    <div class="stat-pill"><strong>8:39</strong> <span>avg pace</span></div>
+    <div class="stat-pill"><strong>208</strong> <span>active weeks</span></div>
+  </div>
+
+  <div class="hero-links">
+    <a href="#charts"
+       class="hero-btn hero-btn-primary">View charts ↓</a>
+    <a href="https://github.com/kateeconnolly/running-performance-analytics"
+       class="hero-btn hero-btn-outline" target="_blank" rel="noopener">
+      Source code
+    </a>
+  </div>
+</header>
+
+<!-- ── Main content ───────────────────────────────────────────────────── -->
+<main id="charts">
+
+  <!-- Training Volume -->
+  <section>
+    <div class="section-header">
+      <h2>Training Volume</h2>
+      <p>Weekly mileage over 4.8 years, with 4-week and 8-week rolling load curves to surface periodisation patterns and training cycles.</p>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <img src="figures/weekly_mileage.png"
+             alt="Weekly mileage bar chart with 4-week rolling average" loading="lazy" />
+        <div class="card-cap">
+          <strong>Weekly Mileage</strong>
+          <span>Bars = weekly total · line = 4-week rolling average per week</span>
+        </div>
+      </div>
+      <div class="card">
+        <img src="figures/rolling_mileage.png"
+             alt="Rolling 4-week and 8-week mileage totals" loading="lazy" />
+        <div class="card-cap">
+          <strong>Rolling Training Load</strong>
+          <span>Cumulative mileage over 4-week and 8-week windows</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Long Run & Pace Distribution -->
+  <section>
+    <div class="section-header">
+      <h2>Long Run Progression &amp; Pace Distribution</h2>
+      <p>How long-run distance has trended over time, and how pace distributes across effort zones — classified by pace tertiles into Easy, Moderate, and Hard.</p>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <img src="figures/long_run_progression.png"
+             alt="Longest run per week scatter plot with linear trend" loading="lazy" />
+        <div class="card-cap">
+          <strong>Long Run Progression</strong>
+          <span>Longest run per active week · dashed line = linear trend</span>
+        </div>
+      </div>
+      <div class="card">
+        <img src="figures/pace_distribution.png"
+             alt="Pace KDE distribution with effort zone shading" loading="lazy" />
+        <div class="card-cap">
+          <strong>Pace Distribution with Effort Zones</strong>
+          <span>Kernel density estimate · shaded zones = Hard / Moderate / Easy tertiles</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pace Over Time -->
+  <section>
+    <div class="section-header">
+      <h2>Pace Over Time</h2>
+      <p>Every run plotted by date and pace. Dot size scales with run distance. The 30-day rolling average reveals long-term pace trends beneath the day-to-day variation.</p>
+    </div>
+    <div class="card">
+      <img src="figures/pace_over_time.png"
+           alt="Scatter of all runs over time coloured by effort level" loading="lazy" />
+      <div class="card-cap">
+        <strong>Pace Over Time — all 1,225 runs</strong>
+        <span>Colour = effort level · size ∝ run distance · line = 30-day rolling average · y-axis inverted (faster = higher)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pace Prediction Model -->
+  <section>
+    <div class="section-header">
+      <h2>Exploratory Pace Prediction Model</h2>
+      <p>A Ridge regression trained on training-load features, evaluated on a held-out future test set to simulate forward deployment.</p>
+    </div>
+    <div class="model-grid">
+      <div class="card">
+        <img src="figures/pace_prediction.png"
+             alt="Actual vs predicted pace scatter plot, train and test sets" loading="lazy" />
+        <div class="card-cap">
+          <strong>Actual vs. Predicted Pace (Ridge Regression)</strong>
+          <span>Points on the dashed diagonal = perfect prediction · blue = train · red = test</span>
+        </div>
+      </div>
+
+      <div class="explainer">
+        <h3>Model Design</h3>
+        <p>Ridge regression predicts pace (min/mile) from six training-load features.
+           Ridge was chosen over OLS because the rolling mileage windows are correlated —
+           the L2 penalty stabilises coefficient estimates under multicollinearity.</p>
+
+        <p>The train/test split is <strong>chronological</strong>, not random: the first 80% of
+           runs (by date) form the training set, and the final 20% the test set. This ensures
+           the model is always evaluated on runs it has never seen and that post-date all
+           training data.</p>
+
+        <div class="finding">
+          <strong>Key finding:</strong> The model returns negative R² on the held-out test set,
+          meaning it does not outperform a naive mean predictor on the most recent 9 months of data.
+          Diagnostics reveal a <strong>−0:40/mile shift</strong> in mean pace between training
+          (8:47/mi) and test (8:07/mi) periods. You got measurably faster — in a way a linear
+          trend trained on 4 prior years could not anticipate. This illustrates a known limitation
+          of linear regression on non-stationary physiological time series.
+        </div>
+
+        <h3>Features used</h3>
+        <table class="feats">
+          <thead><tr><th>Feature</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td class="fc">log_distance</td>       <td>Longer runs → slower pace</td></tr>
+            <tr><td class="fc">rolling_28d_miles</td>  <td>Fitness base (strongest coef.)</td></tr>
+            <tr><td class="fc">rolling_7d_miles</td>   <td>Acute fatigue</td></tr>
+            <tr><td class="fc">days_since_last_run</td><td>Recovery proxy</td></tr>
+            <tr><td class="fc">run_index</td>          <td>Long-term fitness trend</td></tr>
+            <tr><td class="fc">month_num</td>          <td>Seasonal variation</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tech-row">
+          <span class="tech-pill">Ridge Regression</span>
+          <span class="tech-pill">StandardScaler</span>
+          <span class="tech-pill">Chronological split</span>
+          <span class="tech-pill">scikit-learn</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methodology -->
+  <section>
+    <div class="section-header">
+      <h2>Pipeline &amp; Methodology</h2>
+      <p>Four stages from raw Strava export to publication-quality figures, runnable end-to-end with a single command.</p>
+    </div>
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="step">Step 1</div>
+        <h3>Data Cleaning</h3>
+        <p>Filters to running activities, converts Strava's km export to miles, parses timestamps, and removes rows outside physically plausible pace bounds (3–30 min/mile).</p>
+      </div>
+      <div class="method-card">
+        <div class="step">Step 2</div>
+        <h3>Feature Engineering</h3>
+        <p>Builds rolling 7, 28, and 56-day mileage windows from a daily aggregation.
+           A <code>shift(1)</code> ensures only prior days are included — no data leakage.
+           Classifies each run Easy / Moderate / Hard by pace tertile.</p>
+      </div>
+      <div class="method-card">
+        <div class="step">Step 3</div>
+        <h3>Pace Modelling</h3>
+        <p>Ridge regression trained on six features using an 80/20 chronological split.
+           Features are standardised for comparable coefficients. Outputs are
+           associative, not causal.</p>
+      </div>
+      <div class="method-card">
+        <div class="step">Step 4</div>
+        <h3>Visualisation</h3>
+        <p>Six publication-quality figures with Matplotlib and seaborn. Consistent
+           colour palette and typography across all charts, exported at 150 dpi.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem; text-align:center;">
+      <div class="tech-row" style="justify-content:center;">
+        <span class="tech-pill">Python 3.9+</span>
+        <span class="tech-pill">pandas</span>
+        <span class="tech-pill">NumPy</span>
+        <span class="tech-pill">scikit-learn</span>
+        <span class="tech-pill">Matplotlib</span>
+        <span class="tech-pill">seaborn</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer>
+  <p>Raw GPS data and personal activity records are excluded from this repository for privacy.</p>
+  <p style="margin-top:.4rem;">
+    Built with Python ·
+    <a href="docs/project_summary.md" target="_blank">Methodology</a> ·
+    <a href="https://github.com/kateeconnolly/running-performance-analytics"
+       target="_blank" rel="noopener">Source on GitHub</a>
+  </p>
+</footer>
+
+</body>
+</html>
